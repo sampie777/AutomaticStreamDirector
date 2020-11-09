@@ -1,8 +1,8 @@
 package nl.sajansen.automaticstreamdirector.api
 
-import nl.sajansen.automaticstreamdirector.actions.ActionSet
 import nl.sajansen.automaticstreamdirector.config.Config
-import nl.sajansen.automaticstreamdirector.project.Project
+import nl.sajansen.automaticstreamdirector.mocks.ModuleMock
+import nl.sajansen.automaticstreamdirector.modules.Modules
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -12,9 +12,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class ActionSetsApiServletTest {
+class ModulesApiServletTest {
     companion object {
-        private var apiRootEndpoint: String = "/api/v1/actionsets"
+        private var apiRootEndpoint: String = "/api/v1/modules"
         private var apiUrl: String = "" + apiRootEndpoint
 
         @BeforeClass
@@ -36,14 +36,13 @@ class ActionSetsApiServletTest {
 
     @BeforeTest
     fun before() {
-        Project.actionSets.clear()
+        Modules.modules.clear()
     }
 
     @Test
     fun testGetList() {
-        Project.actionSets.add(ActionSet("ActionSet1"))
-        Project.actionSets.add(ActionSet("ActionSet2"))
-        Project.actionSets.add(ActionSet("ActionSet3"))
+        Modules.modules.add(ModuleMock("ModuleMock1"))
+        Modules.modules.add(ModuleMock("ModuleMock2"))
 
         val connection = get("$apiUrl/list")
 
@@ -52,16 +51,10 @@ class ActionSetsApiServletTest {
             """{
   "data": [
     {
-      "name": "ActionSet1",
-      "actions": []
+      "name": "ModuleMock1"
     },
     {
-      "name": "ActionSet2",
-      "actions": []
-    },
-    {
-      "name": "ActionSet3",
-      "actions": []
+      "name": "ModuleMock2"
     }
   ]
 }""".trimIndent(), connection.body().trim()
@@ -82,17 +75,16 @@ class ActionSetsApiServletTest {
 
     @Test
     fun testGetByName() {
-        Project.actionSets.add(ActionSet("ActionSet1"))
-        Project.actionSets.add(ActionSet("ActionSet2"))
+        Modules.modules.add(ModuleMock("ModuleMock1"))
+        Modules.modules.add(ModuleMock("ModuleMock2"))
 
-        val connection = get("$apiUrl/ActionSet1")
+        val connection = get("$apiUrl/ModuleMock1")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
         assertEquals(
             """{
   "data": {
-    "name": "ActionSet1",
-    "actions": []
+    "name": "ModuleMock1"
   }
 }""".trimIndent(), connection.body().trim()
         )

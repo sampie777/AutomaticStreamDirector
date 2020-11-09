@@ -89,6 +89,7 @@ class TriggersApiServletTest {
     @Test
     fun testGetByName() {
         Project.triggers.add(Trigger("Trigger1"))
+        Project.triggers.add(Trigger("Trigger2"))
 
         val connection = get("$apiUrl/Trigger1")
 
