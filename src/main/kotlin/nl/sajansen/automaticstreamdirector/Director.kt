@@ -10,6 +10,7 @@ import java.util.logging.Logger
 object Director {
     private val logger = Logger.getLogger(Director::class.java.name)
 
+    private var lastExecutionThread: Thread? = null
     private var lastTrigger: Trigger? = null
     fun getLastTrigger() = lastTrigger
 
@@ -43,6 +44,13 @@ object Director {
         }
 
         logger.info("Executing ActionSets for trigger: $trigger")
-        trigger.actionSets.forEach(ActionSet::execute)
+        lastExecutionThread = Thread {
+            trigger.actionSets.forEach(ActionSet::execute)
+        }
+        lastExecutionThread?.start()
+    }
+
+    fun waitForActionSetCompletion() {
+        lastExecutionThread?.join()
     }
 }

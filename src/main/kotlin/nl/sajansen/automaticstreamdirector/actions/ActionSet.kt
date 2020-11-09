@@ -1,8 +1,9 @@
 package nl.sajansen.automaticstreamdirector.actions
 
-interface ActionSet {
-    val name: String
-    val actions: ArrayList<Action>
+data class ActionSet (
+    val name: String,
+    val actions: ArrayList<Action> = arrayListOf(),
+) {
 
     fun execute() {
         actions.forEach(Action::execute)

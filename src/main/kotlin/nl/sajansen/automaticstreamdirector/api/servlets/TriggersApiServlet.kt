@@ -46,7 +46,7 @@ class TriggersApiServlet : HttpServlet() {
         val name = params[0]
         logger.info("Getting Trigger with name: $name")
 
-        val trigger = Project.actionSets.find { it.name == name }
+        val trigger = Project.triggers.find { it.name == name }
 
         respondWithJson(response, trigger)
     }
