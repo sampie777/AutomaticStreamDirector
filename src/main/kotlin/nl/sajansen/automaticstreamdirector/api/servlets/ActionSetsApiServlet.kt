@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
+import nl.sajansen.automaticstreamdirector.api.json.ActionSetJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.project.Project
@@ -39,7 +40,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
         val list = Project.actionSets
 
-        respondWithJson(response, list)
+        respondWithJson(response, list.map(ActionSetJson::from))
     }
 
     private fun getByName(response: HttpServletResponse, params: List<String>) {
@@ -48,6 +49,11 @@ class ActionSetsApiServlet : HttpServlet() {
 
         val actionSet = Project.actionSets.find { it.name == name }
 
-        respondWithJson(response, actionSet)
+        if (actionSet == null) {
+            logger.info("Could not find ActionSet with name: $name")
+            return respondWithJson(response, null)
+        }
+
+        respondWithJson(response, actionSet.run(ActionSetJson::from))
     }
 }

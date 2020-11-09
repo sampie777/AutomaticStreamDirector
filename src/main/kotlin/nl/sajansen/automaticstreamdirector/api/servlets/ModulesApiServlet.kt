@@ -6,7 +6,6 @@ import nl.sajansen.automaticstreamdirector.api.json.ModuleJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.modules.Modules
-import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -43,19 +42,21 @@ class ModulesApiServlet : HttpServlet() {
         logger.info("Getting Modules list")
 
         val list = Modules.modules
-            .map { ModuleJson(it.name) }
 
-        respondWithJson(response, list)
+        respondWithJson(response, list.map(ModuleJson::from))
     }
 
     private fun getByName(response: HttpServletResponse, params: List<String>) {
         val name = params[0]
         logger.info("Getting Modules with name: $name")
 
-        val trigger = Modules.modules
-            .map { ModuleJson(it.name) }
-            .find { it.name == name }
+        val module = Modules.modules.find { it.name == name }
 
-        respondWithJson(response, trigger)
+        if (module == null) {
+            logger.info("Could not find Module with name: $name")
+            return respondWithJson(response, null)
+        }
+
+        respondWithJson(response, module.run(ModuleJson::from))
     }
 }

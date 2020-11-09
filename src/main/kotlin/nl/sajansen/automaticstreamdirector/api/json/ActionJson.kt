@@ -1,15 +1,15 @@
 package nl.sajansen.automaticstreamdirector.api.json
 
-import nl.sajansen.automaticstreamdirector.modules.Module
+import nl.sajansen.automaticstreamdirector.actions.Action
 
 
-data class ModuleJson(
+data class ActionJson(
     val name: String,
 ) {
 
     companion object {
-        fun from(it: Module): ModuleJson {
-            return ModuleJson(
+        fun from(it: Action): ActionJson {
+            return ActionJson(
                 name = it.toString(),
             )
         }

@@ -1,15 +1,15 @@
 package nl.sajansen.automaticstreamdirector.api.json
 
-import nl.sajansen.automaticstreamdirector.modules.Module
+import nl.sajansen.automaticstreamdirector.triggers.Condition
 
 
-data class ModuleJson(
+data class ConditionJson(
     val name: String,
 ) {
 
     companion object {
-        fun from(it: Module): ModuleJson {
-            return ModuleJson(
+        fun from(it: Condition): ConditionJson {
+            return ConditionJson(
                 name = it.toString(),
             )
         }

@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
+import nl.sajansen.automaticstreamdirector.api.json.TriggerJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.project.Project
@@ -39,7 +40,7 @@ class TriggersApiServlet : HttpServlet() {
 
         val list = Project.triggers
 
-        respondWithJson(response, list)
+        respondWithJson(response, list.map(TriggerJson::from))
     }
 
     private fun getByName(response: HttpServletResponse, params: List<String>) {
@@ -48,6 +49,11 @@ class TriggersApiServlet : HttpServlet() {
 
         val trigger = Project.triggers.find { it.name == name }
 
-        respondWithJson(response, trigger)
+        if (trigger == null) {
+            logger.info("Could not find Trigger with name: $name")
+            return respondWithJson(response, null)
+        }
+
+        respondWithJson(response, trigger.run(TriggerJson::from))
     }
 }
