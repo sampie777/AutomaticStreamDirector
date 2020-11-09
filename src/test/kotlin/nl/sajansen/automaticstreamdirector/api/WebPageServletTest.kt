@@ -22,7 +22,7 @@ class WebPageServletTest {
             Config.httpApiServerPort = ServerSocket(0).use { it.localPort }
 
             ApiServer.start()
-            apiUrl = ApiServer.url().toString() + apiRootEndpoint
+            apiUrl = ApiServer.url() + apiRootEndpoint
         }
 
         @AfterClass
@@ -39,8 +39,7 @@ class WebPageServletTest {
         assertEquals(HttpStatus.OK_200, connection.responseCode)
 
         val body = connection.body()
-        assertTrue(body.contains("<html>"));
-        assertTrue(body.contains("previous"));
+        assertTrue(body.contains("</html>"))
     }
 
 

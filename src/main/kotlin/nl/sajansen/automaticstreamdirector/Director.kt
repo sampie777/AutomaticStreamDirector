@@ -11,15 +11,21 @@ object Director {
     private val logger = Logger.getLogger(Director::class.java.name)
 
     private var lastExecutionThread: Thread? = null
+
     private var lastTrigger: Trigger? = null
     fun getLastTrigger() = lastTrigger
 
+    private var isRunning: Boolean = false
+    fun isRunning() = isRunning
+
     fun start() {
         UpdateTimer.restart()
+        isRunning = true
     }
 
     fun stop() {
         UpdateTimer.stop()
+        isRunning = false
     }
 
     fun update() {

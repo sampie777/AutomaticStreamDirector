@@ -20,11 +20,7 @@ fun respondWithJson(
     status: Int = HttpServletResponse.SC_OK
 ) {
     val json = jsonBuilder().toJson(JsonSuccessResponse(data = data))
-
-    response.status = status
-    response.contentType = "application/json"
-    response.writer.println(json)
-    logger.info("Response: $json")
+    respondWithContent(response, json, "application/json", status)
 }
 
 fun respondWithHtml(
@@ -32,8 +28,17 @@ fun respondWithHtml(
     data: Any?,
     status: Int = HttpServletResponse.SC_OK
 ) {
+    respondWithContent(response, data, "text/html", status)
+}
+
+fun respondWithContent(
+    response: HttpServletResponse,
+    data: Any?,
+    contentType: String = "text/plain",
+    status: Int = HttpServletResponse.SC_OK
+) {
     response.status = status
-    response.contentType = "text/html"
+    response.contentType = contentType
     response.writer.println(data)
     logger.fine("Response: $data")
 }

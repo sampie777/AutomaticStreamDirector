@@ -2,10 +2,8 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import nl.sajansen.automaticstreamdirector.Director
-import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
-import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -22,6 +20,7 @@ class DirectorApiServlet : HttpServlet() {
         when (request.pathInfo) {
             "/start" -> getStart(response)
             "/stop" -> getStop(response)
+            "/status" -> getStatus(response)
             else -> respondWithNotFound(response)
         }
     }
@@ -48,5 +47,9 @@ class DirectorApiServlet : HttpServlet() {
         Director.stop()
 
         respondWithJson(response, "Director stopped")
+    }
+
+    private fun getStatus(response: HttpServletResponse) {
+        respondWithJson(response, Director.isRunning())
     }
 }
