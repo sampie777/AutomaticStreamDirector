@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import nl.sajansen.automaticstreamdirector.Director
+import nl.sajansen.automaticstreamdirector.api.json.TriggerJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import java.util.logging.Logger
@@ -21,6 +22,7 @@ class DirectorApiServlet : HttpServlet() {
             "/start" -> getStart(response)
             "/stop" -> getStop(response)
             "/status" -> getStatus(response)
+            "/lasttrigger" -> getLastTrigger(response)
             else -> respondWithNotFound(response)
         }
     }
@@ -51,5 +53,13 @@ class DirectorApiServlet : HttpServlet() {
 
     private fun getStatus(response: HttpServletResponse) {
         respondWithJson(response, Director.isRunning())
+    }
+
+    private fun getLastTrigger(response: HttpServletResponse) {
+        logger.info("Getting last executed trigger")
+        
+        val trigger = Director.getLastTrigger()
+        
+        respondWithJson(response, trigger?.run(TriggerJson::from))
     }
 }

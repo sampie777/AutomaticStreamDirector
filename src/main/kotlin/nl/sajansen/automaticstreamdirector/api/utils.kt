@@ -39,12 +39,14 @@ fun respondWithContent(
 ) {
     response.status = status
     response.contentType = contentType
+    response.allowCrossOrigin()
     response.writer.println(data)
     logger.fine("Response: $data")
 }
 
 fun respondWithNotFound(response: HttpServletResponse) {
     response.status = HttpServletResponse.SC_NOT_FOUND
+    response.allowCrossOrigin()
     response.writer.println("Not Found")
 }
 
@@ -53,6 +55,13 @@ fun String.getPathVariables(regex: Regex): List<String> = regex.find(this)?.dest
 fun HttpServletRequest.getQueryParameter(key: String, default: Any?): Any? {
     val param = this.parameterMap[key] ?: return default
     return param[0] ?: default
+}
+
+fun HttpServletResponse.allowCrossOrigin() {
+    this.addHeader("Access-Control-Allow-Origin", "*")
+    this.addHeader("Access-Control-Allow-Credentials", "true")
+    this.addHeader("Access-Control-Allow-Methods", "POST, GET")
+    this.addHeader("Access-Control-Allow-Headers", "Content-Type")
 }
 
 fun HttpURLConnection.body() = (this.content as InputStream).bufferedReader().readText()

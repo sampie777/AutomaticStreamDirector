@@ -1,15 +1,23 @@
-const apiBaseUrl = window.location.origin + "/api/v1";
+const apiBaseUrl = (window.location.hostname === "localhost") ? "http://localhost:8080/api/v1" : window.location.origin + "/api/v1";
+console.log("API base URL: " + apiBaseUrl);
 
 const get = (url) => fetch(url, {
     method: "GET"
 });
 
-const post = (url, data = "") => fetch(url, {
-    method: "POST",
-    body: JSON.stringify(data)
-});
+const post = (url, data = "") => {
+    let headers = {
+        'Content-Type': 'application/json'
+    };
 
-const api = {
+    return fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: headers
+    });
+}
+
+export const api = {
     triggers: {
         list: () => get(`${apiBaseUrl}/triggers/list`),
         get: (name) => get(`${apiBaseUrl}/triggers/${name}`),
