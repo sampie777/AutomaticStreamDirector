@@ -8,5 +8,5 @@ object Project {
     private val logger = Logger.getLogger(Project::class.java.name)
 
     val triggers: ArrayList<Trigger> = arrayListOf()
-    val actionSets: ArrayList<ActionSet> = arrayListOf()
+    val availableActionSets: ArrayList<ActionSet> = arrayListOf()
 }

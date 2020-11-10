@@ -12,7 +12,7 @@ class DirectorTest {
     @BeforeTest
     fun before() {
         Project.triggers.clear()
-        Project.actionSets.clear()
+        Project.availableActionSets.clear()
     }
 
     @Test
@@ -20,7 +20,7 @@ class DirectorTest {
         val action = ActionMock()
         val actionSet = ActionSet("ActionSet1")
         actionSet.actions.add(action)
-        Project.actionSets.add(actionSet)
+        Project.availableActionSets.add(actionSet)
 
         val trigger = Trigger("TriggerMock1")
         trigger.conditions.add(ConditionMock(checkReturnValue = true))
@@ -41,7 +41,7 @@ class DirectorTest {
         val action = ActionMock()
         val actionSet = ActionSet("ActionSet1")
         actionSet.actions.add(action)
-        Project.actionSets.add(actionSet)
+        Project.availableActionSets.add(actionSet)
 
         val trigger = Trigger("TriggerMock1")
         trigger.conditions.add(ConditionMock(checkReturnValue = true))
@@ -62,7 +62,7 @@ class DirectorTest {
         val action = ActionMock()
         val actionSet = ActionSet("ActionSet1")
         actionSet.actions.add(action)
-        Project.actionSets.add(actionSet)
+        Project.availableActionSets.add(actionSet)
 
         val trigger = Trigger("TriggerMock1")
         trigger.conditions.add(ConditionMock(checkReturnValue = false))

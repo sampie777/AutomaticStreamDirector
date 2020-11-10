@@ -21,6 +21,7 @@ export const api = {
     triggers: {
         list: () => get(`${apiBaseUrl}/triggers/list`),
         get: (name) => get(`${apiBaseUrl}/triggers/${name}`),
+        save: (trigger) => post(`${apiBaseUrl}/triggers/save`, trigger),
     },
     actionSets: {
         list: () => get(`${apiBaseUrl}/actionsets/list`),

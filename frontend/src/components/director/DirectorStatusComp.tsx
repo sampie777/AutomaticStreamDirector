@@ -44,7 +44,7 @@ export default class DirectorStatusComp extends Component<ComponentProps, Compon
             })
             .finally(() => {
                 if (this.keepPolling) {
-                    window.setTimeout(this.update, 2000, this.keepPolling);
+                    window.setTimeout(this.update, 20000, this.keepPolling);
                 }
             });
     }

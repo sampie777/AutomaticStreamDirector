@@ -38,7 +38,7 @@ class ActionSetsApiServlet : HttpServlet() {
     private fun getList(response: HttpServletResponse) {
         logger.info("Getting Actions list")
 
-        val list = Project.actionSets
+        val list = Project.availableActionSets
 
         respondWithJson(response, list.map(ActionSetJson::from))
     }
@@ -47,7 +47,7 @@ class ActionSetsApiServlet : HttpServlet() {
         val name = params[0]
         logger.info("Getting ActionSet with name: $name")
 
-        val actionSet = Project.actionSets.find { it.name == name }
+        val actionSet = Project.availableActionSets.find { it.name == name }
 
         if (actionSet == null) {
             logger.info("Could not find ActionSet with name: $name")

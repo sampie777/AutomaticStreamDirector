@@ -19,5 +19,12 @@ data class TriggerJson(
                 actionSets = it.actionSets.map(ActionSetJson::from),
             )
         }
+
+        fun toTrigger(it: TriggerJson): Trigger? {
+            return Trigger(
+                name = it.name,
+                importance = it.importance,
+            )
+        }
     }
 }

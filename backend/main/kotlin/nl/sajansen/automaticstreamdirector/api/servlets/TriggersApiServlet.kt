@@ -1,6 +1,8 @@
 package nl.sajansen.automaticstreamdirector.api.servlets
 
 
+import com.google.gson.Gson
+import nl.sajansen.automaticstreamdirector.api.body
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.TriggerJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
@@ -31,6 +33,7 @@ class TriggersApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
+            "/save" -> postSave(request, response)
             else -> respondWithNotFound(response)
         }
     }
@@ -53,6 +56,25 @@ class TriggersApiServlet : HttpServlet() {
             logger.info("Could not find Trigger with name: $name")
             return respondWithJson(response, null)
         }
+
+        respondWithJson(response, trigger.run(TriggerJson::from))
+    }
+
+    private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Saving Trigger")
+
+        val json = request.body()
+        val jsonObject = Gson().fromJson(json, TriggerJson::class.java)
+        logger.info(jsonObject.toString())
+
+        val trigger = TriggerJson.toTrigger(jsonObject)
+
+        if (trigger == null) {
+            return respondWithJson(response, null)
+        }
+
+        Project.triggers.removeIf { it.name == trigger.name }
+        Project.triggers.add(trigger)
 
         respondWithJson(response, trigger.run(TriggerJson::from))
     }

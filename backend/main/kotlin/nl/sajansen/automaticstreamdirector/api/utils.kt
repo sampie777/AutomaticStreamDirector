@@ -1,9 +1,13 @@
 package nl.sajansen.automaticstreamdirector.api
 
 import nl.sajansen.automaticstreamdirector.jsonBuilder
+import org.eclipse.jetty.servlet.ServletContextHandler
+import org.eclipse.jetty.servlets.CrossOriginFilter
 import java.io.InputStream
 import java.net.HttpURLConnection
+import java.util.*
 import java.util.logging.Logger
+import javax.servlet.DispatcherType
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -39,14 +43,12 @@ fun respondWithContent(
 ) {
     response.status = status
     response.contentType = contentType
-    response.allowCrossOrigin()
     response.writer.println(data)
     logger.fine("Response: $data")
 }
 
 fun respondWithNotFound(response: HttpServletResponse) {
     response.status = HttpServletResponse.SC_NOT_FOUND
-    response.allowCrossOrigin()
     response.writer.println("Not Found")
 }
 
@@ -57,13 +59,25 @@ fun HttpServletRequest.getQueryParameter(key: String, default: Any?): Any? {
     return param[0] ?: default
 }
 
-fun HttpServletResponse.allowCrossOrigin() {
-    this.addHeader("Access-Control-Allow-Origin", "*")
-    this.addHeader("Access-Control-Allow-Credentials", "true")
-    this.addHeader("Access-Control-Allow-Methods", "POST, GET")
-    this.addHeader("Access-Control-Allow-Headers", "Content-Type")
-}
-
 fun HttpURLConnection.body() = (this.content as InputStream).bufferedReader().readText()
 fun HttpURLConnection.errorBody() = this.errorStream?.bufferedReader()?.readText()
 fun HttpServletRequest.body() = this.inputStream.bufferedReader().readText()
+
+fun ServletContextHandler.allowCrossOrigin() {
+    val filterHolder = this.addFilter(
+        CrossOriginFilter::class.java,
+        "/*",
+        EnumSet.of(DispatcherType.REQUEST)
+    )
+
+    filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*")
+    filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true")
+    filterHolder.setInitParameter(
+        CrossOriginFilter.ACCESS_CONTROL_ALLOW_METHODS_HEADER,
+        "OPTIONS, HEAD, GET, POST, PUT, DELETE"
+    )
+    filterHolder.setInitParameter(
+        CrossOriginFilter.ACCESS_CONTROL_ALLOW_HEADERS_HEADER,
+        "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept"
+    )
+}

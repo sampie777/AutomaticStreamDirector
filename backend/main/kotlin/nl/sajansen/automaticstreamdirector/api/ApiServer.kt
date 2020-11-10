@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.servlet.ServletContextHandler
 import java.util.logging.Logger
 
+
 object ApiServer {
     private val logger = Logger.getLogger(ApiServer::class.java.name)
 
@@ -21,6 +22,7 @@ object ApiServer {
 
         val apiServletContextHandler = ServletContextHandler()
         apiServletContextHandler.contextPath = "/api/v1"
+        apiServletContextHandler.allowCrossOrigin()
 
         logger.fine("Registering API endpoints")
         apiServletContextHandler.addServlet(ConfigApiServlet::class.java, "/config/*")

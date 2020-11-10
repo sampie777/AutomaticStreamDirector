@@ -36,14 +36,14 @@ class ActionSetsApiServletTest {
 
     @BeforeTest
     fun before() {
-        Project.actionSets.clear()
+        Project.availableActionSets.clear()
     }
 
     @Test
     fun testGetList() {
-        Project.actionSets.add(ActionSet("ActionSet1"))
-        Project.actionSets.add(ActionSet("ActionSet2"))
-        Project.actionSets.add(ActionSet("ActionSet3"))
+        Project.availableActionSets.add(ActionSet("ActionSet1"))
+        Project.availableActionSets.add(ActionSet("ActionSet2"))
+        Project.availableActionSets.add(ActionSet("ActionSet3"))
 
         val connection = get("$apiUrl/list")
 
@@ -82,8 +82,8 @@ class ActionSetsApiServletTest {
 
     @Test
     fun testGetByName() {
-        Project.actionSets.add(ActionSet("ActionSet1"))
-        Project.actionSets.add(ActionSet("ActionSet2"))
+        Project.availableActionSets.add(ActionSet("ActionSet1"))
+        Project.availableActionSets.add(ActionSet("ActionSet2"))
 
         val connection = get("$apiUrl/ActionSet1")
 
