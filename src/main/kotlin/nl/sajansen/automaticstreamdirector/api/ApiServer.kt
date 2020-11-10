@@ -4,7 +4,9 @@ package nl.sajansen.automaticstreamdirector.api
 import nl.sajansen.automaticstreamdirector.api.servlets.*
 import nl.sajansen.automaticstreamdirector.config.Config
 import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.server.handler.ContextHandler
 import org.eclipse.jetty.server.handler.HandlerList
+import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.servlet.ServletContextHandler
 import java.util.logging.Logger
 
@@ -28,10 +30,19 @@ object ApiServer {
         apiServletContextHandler.addServlet(ModulesApiServlet::class.java, "/modules/*")
         handlers.addHandler(apiServletContextHandler)
 
-        val webPageServletContextHandler = ServletContextHandler()
-        webPageServletContextHandler.contextPath = ""
-        webPageServletContextHandler.addServlet(WebPageServlet::class.java, "/*")
-        handlers.addHandler(webPageServletContextHandler)
+        val resourceHandler = ResourceHandler().also {
+            it.isDirectoriesListed = false
+            it.welcomeFiles = arrayOf("index.html")
+            it.resourceBase = ApiServer::class.java.getResource("/nl/sajansen/automaticstreamdirector/web/build/").path
+        }
+        val contextHandler = ContextHandler("")
+        contextHandler.handler = resourceHandler
+        handlers.addHandler(contextHandler)
+
+//        val webPageServletContextHandler = ServletContextHandler()
+//        webPageServletContextHandler.contextPath = "/"
+//        webPageServletContextHandler.addServlet(WebPageServlet::class.java, "/*")
+//        handlers.addHandler(webPageServletContextHandler)
     }
 
     fun start() {

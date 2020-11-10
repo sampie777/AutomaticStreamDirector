@@ -46,6 +46,7 @@ class WebPageServlet : HttpServlet() {
             "css" -> "text/css"
             "js" -> "application/javascript"
             "xml" -> "text/xml"
+            "html" -> "text/html"
             "pdf" -> "application/pdf"
             "gif" -> "image/gif"
             "jpeg" -> "image/jpeg"
