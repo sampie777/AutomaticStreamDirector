@@ -2,8 +2,6 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 
 import nl.sajansen.automaticstreamdirector.triggers.Condition
-import java.sql.Time
-import java.time.LocalTime
 import java.util.*
 import java.util.logging.Logger
 

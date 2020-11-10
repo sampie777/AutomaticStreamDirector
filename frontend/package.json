@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf ../src/main/resources/nl/sajansen/automaticstreamdirector/web/build && mv build ../src/main/resources/nl/sajansen/automaticstreamdirector/web/build",
+    "build": "react-scripts build && rm -rf ../backend/main/resources/nl/sajansen/automaticstreamdirector/web/build && mv build ../backend/main/resources/nl/sajansen/automaticstreamdirector/web/build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

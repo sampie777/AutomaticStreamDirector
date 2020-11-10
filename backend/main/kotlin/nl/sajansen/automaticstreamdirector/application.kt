@@ -2,9 +2,11 @@ package nl.sajansen.automaticstreamdirector
 
 import nl.sajansen.automaticstreamdirector.api.ApiServer
 import nl.sajansen.automaticstreamdirector.config.Config
-import nl.sajansen.automaticstreamdirector.modules.ModuleLoader
 import nl.sajansen.automaticstreamdirector.modules.Modules
-import nl.sajansen.automaticstreamdirector.project.UpdateTimer
+import nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions.ClockCondition
+import nl.sajansen.automaticstreamdirector.project.Project
+import nl.sajansen.automaticstreamdirector.triggers.Trigger
+import java.time.LocalTime
 import java.util.logging.Logger
 import kotlin.system.exitProcess
 
@@ -27,6 +29,13 @@ fun main(args: Array<String>) {
     ApiServer.start()
 
     Director.start()
+
+    val trigger = Trigger("Trigger1")
+    trigger.conditions.add(ClockCondition(LocalTime.now()))
+    trigger.conditions.add(ClockCondition(LocalTime.now()))
+    Project.triggers.add(trigger)
+    Project.triggers.add(Trigger("Trigger2", importance = 1))
+    Project.triggers.add(Trigger("Trigger3"))
 }
 
 

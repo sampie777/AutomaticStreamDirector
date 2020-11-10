@@ -1,10 +1,7 @@
 package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 
-import nl.sajansen.automaticstreamdirector.triggers.Condition
-import java.sql.Time
 import java.util.*
-import java.util.logging.Logger
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
