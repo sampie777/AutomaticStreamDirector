@@ -12,4 +12,8 @@ class ActionMock : Action {
     override fun execute() {
         isExecuted = true
     }
+
+    override fun displayName(): String {
+        return "ActinoMock"
+    }
 }

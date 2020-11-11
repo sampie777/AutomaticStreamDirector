@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 
@@ -72,6 +74,7 @@ fun getFileExtension(file: File): String {
 }
 
 fun Date.format(format: String): String? = SimpleDateFormat(format).format(this)
+fun LocalTime.format(format: String): String = this.format(DateTimeFormatter.ofPattern(format))
 
 internal fun jsonBuilder(prettyPrint: Boolean = true): Gson {
     val builder = GsonBuilder()

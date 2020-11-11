@@ -10,7 +10,7 @@ data class ConditionJson(
     companion object {
         fun from(it: Condition): ConditionJson {
             return ConditionJson(
-                name = it.toString(),
+                name = it.displayName(),
             )
         }
     }

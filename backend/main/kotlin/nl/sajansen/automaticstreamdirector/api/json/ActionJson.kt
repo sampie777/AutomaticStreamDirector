@@ -10,7 +10,7 @@ data class ActionJson(
     companion object {
         fun from(it: Action): ActionJson {
             return ActionJson(
-                name = it.toString(),
+                name = it.displayName(),
             )
         }
     }

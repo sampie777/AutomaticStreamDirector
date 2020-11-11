@@ -12,4 +12,8 @@ class ConditionMock(
     override fun check(): Boolean {
         return checkReturnValue
     }
+
+    override fun displayName(): String {
+        return "ConditionMock"
+    }
 }
