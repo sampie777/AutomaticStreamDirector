@@ -28,4 +28,6 @@ class HttpRequestAction(
             "Do $method request to $url"
         }
     }
+
+    override fun toString() = displayName()
 }

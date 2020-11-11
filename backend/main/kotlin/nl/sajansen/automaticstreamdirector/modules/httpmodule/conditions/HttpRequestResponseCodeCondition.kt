@@ -24,4 +24,6 @@ class HttpRequestResponseCodeCondition(
     override fun displayName(): String {
         return "If $url ($method) gives response code $expectedCode"
     }
+
+    override fun toString() = displayName()
 }

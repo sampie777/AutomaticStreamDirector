@@ -27,4 +27,6 @@ class ClockCondition(
             "If current time is ${time.format("H:mm")}"
         }
     }
+
+    override fun toString() = displayName()
 }

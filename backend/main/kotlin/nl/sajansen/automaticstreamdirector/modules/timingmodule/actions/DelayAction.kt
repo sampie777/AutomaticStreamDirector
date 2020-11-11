@@ -19,4 +19,6 @@ class DelayAction(
         val seconds = round((milliseconds / 1000.0) * 1000) / 1000.0
         return "Wait $seconds seconds"
     }
+
+    override fun toString() = displayName()
 }

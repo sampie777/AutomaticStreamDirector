@@ -37,4 +37,6 @@ class HttpRequestBodyCondition(
     override fun displayName(): String {
         return "If $url ($method) response matches $expectedBody"
     }
+
+    override fun toString() = displayName()
 }

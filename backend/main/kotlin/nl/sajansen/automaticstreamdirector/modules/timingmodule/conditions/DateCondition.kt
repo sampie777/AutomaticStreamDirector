@@ -28,4 +28,6 @@ class DateCondition(
             "If current date is ${date.format("d-M-yyyy")}"
         }
     }
+
+    override fun toString() = displayName()
 }

@@ -15,7 +15,7 @@ import java.util.logging.Logger
 
 private val logger: Logger = Logger.getLogger("utils")
 
-fun getTimeAsClock(seconds: Long): String {
+fun getTimeAsClock(seconds: Long, looseFormat: Boolean = false): String {
     var positiveValue = seconds
 
     var signString = ""
@@ -27,7 +27,12 @@ fun getTimeAsClock(seconds: Long): String {
     val timerHours = positiveValue / 3600
     val timerMinutes = (positiveValue - timerHours * 3600) / 60
     val timerSeconds = positiveValue - timerHours * 3600 - timerMinutes * 60
-    return String.format("%s%d:%02d:%02d", signString, timerHours, timerMinutes, timerSeconds)
+
+    if (!looseFormat || timerHours != 0L) {
+        return String.format("%s%d:%02d:%02d", signString, timerHours, timerMinutes, timerSeconds)
+    }
+
+    return String.format("%s%d:%02d", signString, timerMinutes, timerSeconds)
 }
 
 @Throws(UnsupportedEncodingException::class)
