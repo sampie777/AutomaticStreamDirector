@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.modules.httpmodule.actions
 
 
 import nl.sajansen.automaticstreamdirector.actions.Action
+import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import org.eclipse.jetty.http.HttpMethod
 import requestConnection
 import java.util.logging.Logger
@@ -30,4 +31,9 @@ class HttpRequestAction(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticAction {
+        override fun name(): String = HttpRequestAction::class.java.simpleName
+        override fun previewText(): String = "Do request / send content to URL..."
+    }
 }

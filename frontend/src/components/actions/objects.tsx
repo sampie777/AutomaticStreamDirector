@@ -16,3 +16,17 @@ export class ActionSet {
         this.actions = actions;
     }
 }
+
+export class StaticAction {
+    className: string;
+    name: string;
+    previewText: string;
+
+    constructor(className: string,
+                name: string,
+                previewText: string) {
+        this.className = className;
+        this.name = name;
+        this.previewText = previewText;
+    }
+}

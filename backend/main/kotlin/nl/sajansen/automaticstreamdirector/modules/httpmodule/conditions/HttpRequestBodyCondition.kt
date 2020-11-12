@@ -4,6 +4,7 @@ package nl.sajansen.automaticstreamdirector.modules.httpmodule.conditions
 import nl.sajansen.automaticstreamdirector.api.body
 import nl.sajansen.automaticstreamdirector.api.errorBody
 import nl.sajansen.automaticstreamdirector.triggers.Condition
+import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import org.eclipse.jetty.http.HttpMethod
 import requestConnection
 import java.util.logging.Logger
@@ -39,4 +40,9 @@ class HttpRequestBodyCondition(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticCondition {
+        override fun name(): String = HttpRequestBodyCondition::class.java.simpleName
+        override fun previewText(): String = "If URL responds with content..."
+    }
 }

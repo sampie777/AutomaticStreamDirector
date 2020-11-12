@@ -4,6 +4,8 @@ import {NotificationComponent} from "./components/notification/notifications";
 import TriggerListComp from "./components/triggers/TriggerListComp";
 import ActionSetListComp from "./components/actions/ActionSetListComp";
 import DirectorStatusComp from "./components/director/DirectorStatusComp";
+import StaticActionListComp from "./components/actions/StaticActionListComp";
+import StaticConditionListComp from "./components/triggers/StaticConditionListComp";
 
 function App() {
   return (
@@ -13,6 +15,11 @@ function App() {
       <DirectorStatusComp/>
       <TriggerListComp/>
       <ActionSetListComp/>
+
+      <hr/>
+
+      <StaticConditionListComp/>
+      <StaticActionListComp/>
     </div>
   );
 }

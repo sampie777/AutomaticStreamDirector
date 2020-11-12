@@ -29,6 +29,8 @@ export const api = {
     },
     modules: {
         list: () => get(`${apiBaseUrl}/modules/list`),
+        actions: () => get(`${apiBaseUrl}/modules/actions`),
+        conditions: () => get(`${apiBaseUrl}/modules/conditions`),
         get: (name) => get(`${apiBaseUrl}/modules/${name}`),
     },
     director: {

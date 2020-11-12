@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 import nl.sajansen.automaticstreamdirector.format
 import nl.sajansen.automaticstreamdirector.triggers.Condition
+import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.*
 import java.util.logging.Logger
 
@@ -30,4 +31,9 @@ class DateCondition(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticCondition {
+        override fun name(): String = DateCondition::class.java.simpleName
+        override fun previewText(): String = "If today is [d-M-yyyy (H:mm)]"
+    }
 }

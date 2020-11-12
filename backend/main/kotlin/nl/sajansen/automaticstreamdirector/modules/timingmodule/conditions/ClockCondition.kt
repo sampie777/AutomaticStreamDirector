@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 import nl.sajansen.automaticstreamdirector.format
 import nl.sajansen.automaticstreamdirector.triggers.Condition
+import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.time.LocalTime
 import java.util.logging.Logger
 
@@ -29,4 +30,9 @@ class ClockCondition(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticCondition {
+        override fun name(): String = ClockCondition::class.java.simpleName
+        override fun previewText(): String = "If current time is [H:mm(:ss)]"
+    }
 }

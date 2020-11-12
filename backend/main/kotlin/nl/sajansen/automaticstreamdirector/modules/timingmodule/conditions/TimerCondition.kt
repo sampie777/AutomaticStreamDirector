@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 import nl.sajansen.automaticstreamdirector.getTimeAsClock
 import nl.sajansen.automaticstreamdirector.triggers.Condition
+import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.*
 import java.util.logging.Logger
 
@@ -29,4 +30,9 @@ class TimerCondition(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticCondition {
+        override fun name(): String = TimerCondition::class.java.simpleName
+        override fun previewText(): String = "If [...] seconds went by"
+    }
 }

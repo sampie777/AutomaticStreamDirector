@@ -1,0 +1,126 @@
+import React, {Component} from 'react'
+import ReactDOMServer from 'react-dom/server';
+import {Button, Modal, Form} from 'semantic-ui-react'
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import './ScheduleItemEditModal.css';
+import {api} from "../../../api";
+import {ScheduleItem} from "../../../models/schedules";
+
+
+interface ComponentProps {
+    trigger: Trigger,
+    onUpdated: Function
+}
+
+interface ComponentState {
+    isEditing: boolean
+}
+
+class ConditionEditComp extends Component {
+    constructor(props) {
+        super(props);
+        let newScheduleItem = {...this.props.scheduleItem};
+
+        this.state = {
+            editor: null,
+            newScheduleItem: newScheduleItem
+        };
+
+        this.getHTMLVerses = this.getHTMLVerses.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.saveScheduleItem = this.saveScheduleItem.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (ScheduleItem.compare(prevProps.scheduleItem, this.props.scheduleItem))
+            return;
+
+        let newScheduleItem = {...this.props.scheduleItem};
+        this.setState({newScheduleItem: newScheduleItem});
+    }
+
+    handleInputChange(e, {name, value}) {
+        this.setState(prevState => ({
+            newScheduleItem: {
+                ...prevState.newScheduleItem,
+                [name]: value
+            }
+        }));
+    }
+
+    saveScheduleItem(e) {
+        e.preventDefault();
+        api.scheduleItems.update(this.props.scheduleID, this.props.scheduleItem.id, this.state.newScheduleItem)
+            .then(response => response.json())
+            .then(item => {
+                this.closeModal();
+                this.setState({newScheduleItem: item});
+                this.props.onUpdatedEvent();
+            })
+            .catch(console.error);
+    }
+
+    closeModal(e) {
+        this.props.closeModal(e);
+    }
+
+    render() {
+        return <Modal centered={false}
+                      open={this.props.isModalOpen}
+                      onClose={this.closeModal}
+                      className={'ScheduleItemEditModal'}>
+            <Modal.Header>Edit {this.props.scheduleItem.name}</Modal.Header>
+            <Modal.Content scrolling>
+                <Modal.Description>
+                    <Form onSubmit={this.saveScheduleItem}>
+                        <Form.Group>
+                            <Form.Input name={'name'}
+                                        label='Title'
+                                        onChange={this.handleInputChange}
+                                        placeholder='Title'
+                                        defaultValue={this.state.newScheduleItem.name}/>
+
+                            <Form.Dropdown placeholder='Type'
+                                           label='Type'
+                                           name={'type'}
+                                           selection
+                                           onChange={this.handleInputChange}
+                                           defaultValue={this.state.newScheduleItem.type}
+                                           options={typeOptions}/>
+                        </Form.Group>
+
+                        <Form.Group className={'FormCKEditorGroup'}>
+                            <Form.Field label='Content'/>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={this.getHTMLVerses(this.props.scheduleItem.verses)}
+                                onInit={editor => {
+                                    window.editor = editor;
+                                    this.setState({editor: editor});
+                                }}
+                                onChange={(e, editor) => {
+                                    let verses = this.parseHTML(editor.getData());
+
+                                    this.handleInputChange(e, {name: 'verses', value: verses});
+
+                                    // console.log('Update!');
+                                    // editor.setData(this.getHTMLVerses(verses));
+                                }}
+                                onBlur={(event, editor) => {
+                                }}
+                                onFocus={(event, editor) => {
+                                }}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Description>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button onClick={this.closeModal}>Cancel</Button>
+                <Button primary positive onClick={this.saveScheduleItem}>Save</Button>
+            </Modal.Actions>
+        </Modal>;
+    }
+}

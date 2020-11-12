@@ -3,6 +3,8 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.ModuleJson
+import nl.sajansen.automaticstreamdirector.api.json.StaticActionJson
+import nl.sajansen.automaticstreamdirector.api.json.StaticConditionJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.modules.Modules
@@ -22,6 +24,8 @@ class ModulesApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/list" -> getList(response)
+            "/actions" -> getStaticActions(response)
+            "/conditions" -> getStaticConditions(response)
             in Regex(triggerNameMatcher.pattern) -> getByName(
                 response,
                 request.pathInfo.getPathVariables(triggerNameMatcher)
@@ -44,6 +48,22 @@ class ModulesApiServlet : HttpServlet() {
         val list = Modules.modules
 
         respondWithJson(response, list.map(ModuleJson::from))
+    }
+
+    private fun getStaticActions(response: HttpServletResponse) {
+        logger.info("Getting Static Actions for modules")
+
+        val actions = Modules.actions()
+
+        respondWithJson(response, actions.map(StaticActionJson::from))
+    }
+
+    private fun getStaticConditions(response: HttpServletResponse) {
+        logger.info("Getting Static Conditions for modules")
+
+        val conditions = Modules.conditions()
+
+        respondWithJson(response, conditions.map(StaticConditionJson::from))
     }
 
     private fun getByName(response: HttpServletResponse, params: List<String>) {

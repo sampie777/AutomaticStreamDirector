@@ -45,7 +45,7 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
     }
 
     render() {
-        return <div>
+        return <div className={"component-list"}>
             <h3>ActionSets</h3>
             {this.state.actionSets.length > 0 ?
                 this.state.actionSets

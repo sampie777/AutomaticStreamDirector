@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.actions
 
 
 import nl.sajansen.automaticstreamdirector.actions.Action
+import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.modules.httpmodule.actions.HttpRequestAction
 import java.util.logging.Logger
 import kotlin.math.round
@@ -21,4 +22,9 @@ class DelayAction(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticAction {
+        override fun name(): String = DelayAction::class.java.simpleName
+        override fun previewText(): String = "Wait ... seconds"
+    }
 }

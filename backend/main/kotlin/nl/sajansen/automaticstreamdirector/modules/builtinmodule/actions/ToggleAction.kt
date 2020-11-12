@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.modules.builtinmodule.actions
 
 
 import nl.sajansen.automaticstreamdirector.actions.Action
+import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import java.util.logging.Logger
 
 class ToggleAction(
@@ -29,4 +30,9 @@ class ToggleAction(
     }
 
     override fun toString() = displayName()
+
+    companion object : StaticAction {
+        override fun name(): String = ToggleAction::class.java.simpleName
+        override fun previewText(): String = "Toggle action: ..."
+    }
 }

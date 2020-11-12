@@ -23,5 +23,18 @@ export class Trigger {
         this.conditions = conditions;
         this.actionSets = actionSets;
     }
+}
 
+export class StaticCondition {
+    className: string;
+    name: string;
+    previewText: string;
+
+    constructor(className: string,
+                name: string,
+                previewText: string) {
+        this.className = className;
+        this.name = name;
+        this.previewText = previewText;
+    }
 }

@@ -46,7 +46,7 @@ export default class TriggerListComp extends Component<ComponentProps, Component
     }
 
     render() {
-        return <div className={"TriggerListComp"}>
+        return <div className={"component-list"}>
             <h3>Triggers</h3>
             {this.state.triggers.length > 0 ?
                 this.state.triggers
