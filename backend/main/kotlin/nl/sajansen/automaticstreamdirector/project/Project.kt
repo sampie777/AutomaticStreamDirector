@@ -64,6 +64,7 @@ object Project {
                 ?.let { actionSet -> it.actionSets.add(actionSet) }
         })
 
-        triggers.add(Trigger("Trigger3"))
+        triggers.add(Trigger("Trigger3").also {
+        })
     }
 }

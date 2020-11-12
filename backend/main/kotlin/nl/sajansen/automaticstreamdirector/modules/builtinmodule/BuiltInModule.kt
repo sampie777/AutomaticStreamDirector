@@ -4,6 +4,7 @@ package nl.sajansen.automaticstreamdirector.modules.builtinmodule
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.modules.Module
 import nl.sajansen.automaticstreamdirector.modules.builtinmodule.actions.ToggleAction
+import nl.sajansen.automaticstreamdirector.modules.builtinmodule.conditions.RandomNumberCondition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.logging.Logger
 
@@ -20,6 +21,7 @@ class BuiltInModule : Module {
 
     override fun conditions(): List<StaticCondition> {
         return listOf<StaticCondition>(
+            RandomNumberCondition,
         )
     }
 }
