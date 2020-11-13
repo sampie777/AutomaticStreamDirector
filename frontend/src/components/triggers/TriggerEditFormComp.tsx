@@ -42,7 +42,7 @@ export default class TriggerEditFormComp extends Component<ComponentProps, Compo
             []
         );
 
-        console.log(trigger);
+        console.log("Saving trigger:", trigger);
 
         api.triggers.save(trigger)
             .then(response => response.json())

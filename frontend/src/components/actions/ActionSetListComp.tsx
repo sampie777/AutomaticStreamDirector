@@ -32,7 +32,7 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
             .then(data => {
                 const actionSets = data.data;
 
-                console.log(actionSets);
+                console.log("Loaded action sets list:", actionSets);
 
                 this.setState({
                     actionSets: actionSets

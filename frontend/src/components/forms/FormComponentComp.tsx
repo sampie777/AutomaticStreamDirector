@@ -12,8 +12,6 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
 
     constructor(props: ComponentProps) {
         super(props);
-
-        console.log(this.props.component);
     }
 
     private getInput() {

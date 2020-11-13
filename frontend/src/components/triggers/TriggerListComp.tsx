@@ -33,7 +33,7 @@ export default class TriggerListComp extends Component<ComponentProps, Component
             .then(data => {
                 const triggers = data.data;
 
-                console.log(triggers);
+                console.log("Loaded triggers list:", triggers);
 
                 this.setState({
                     triggers: triggers

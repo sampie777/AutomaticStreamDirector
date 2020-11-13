@@ -32,7 +32,7 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
             .then(data => {
                 const conditions = data.data;
 
-                console.log(conditions);
+                console.log("Loaded conditions list:", conditions);
 
                 this.setState({
                     conditions: conditions

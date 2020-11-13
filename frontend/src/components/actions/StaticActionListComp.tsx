@@ -37,7 +37,7 @@ export default class StaticActionListComp extends Component<ComponentProps, Comp
             .then(data => {
                 const actions = data.data;
 
-                console.log(actions);
+                console.log("Loaded actions list:", actions);
 
                 this.setState({
                     actions: actions

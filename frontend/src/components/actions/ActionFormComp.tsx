@@ -44,7 +44,7 @@ export default class ActionFormComp extends Component<ComponentProps, ComponentS
             .then(response => response.json())
             .then(data => {
                 const response = data.data;
-                console.log(response);
+                console.log("Save action response: ", response);
 
                 if (response instanceof Array) {
                     response.forEach(it =>

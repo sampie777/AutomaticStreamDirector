@@ -60,7 +60,7 @@ class WebPageServlet : HttpServlet() {
     }
 
     private fun getIndex(request: HttpServletRequest, response: HttpServletResponse) {
-        val html = WebPageServlet::class.java.getResource("/nl/sajansen/automaticstreamdirector/web/index.html")
+        val html = WebPageServlet::class.java.getResource("/nl/sajansen/automaticstreamdirector/web/build/index.html")
             .readText(Charsets.UTF_8)
         respondWithHtml(response, html)
     }
