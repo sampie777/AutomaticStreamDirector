@@ -28,7 +28,7 @@ class DelayAction(
     companion object : StaticAction {
         override val name: String = DelayAction::class.java.simpleName
         override val previewText: String = "Wait ... seconds"
-        override val formComponents: List<FormComponent> = listOf(
+        override fun formComponents(): List<FormComponent> = listOf(
             FormComponent(
                 "milliseconds",
                 "Milli seconds",

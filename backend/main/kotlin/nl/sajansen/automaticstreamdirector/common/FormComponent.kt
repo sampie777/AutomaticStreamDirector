@@ -7,6 +7,8 @@ data class FormComponent (
     val required: Boolean = false,
     val defaultValue: Any? = null,
     val value: Any? = null,
+
+    val selectValues: List<String> = emptyList()
 ) {
     enum class Type{
         Text,
@@ -16,5 +18,6 @@ data class FormComponent (
         Checkbox,
         URL,
         Password,
+        Select,
     }
 }

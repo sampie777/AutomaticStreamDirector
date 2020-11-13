@@ -6,7 +6,8 @@ import nl.sajansen.automaticstreamdirector.common.FormComponent
 interface StaticAction {
     val name: String
     val previewText: String
-    val formComponents: List<FormComponent>
+
+    fun formComponents(): List<FormComponent>
 
     /**
      * Returns List<String> for validation errors. Else Action if successful.

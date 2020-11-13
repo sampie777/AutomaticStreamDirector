@@ -17,7 +17,7 @@ data class StaticActionJson(
                 className = it::class.java.name,
                 name = it.name,
                 previewText = it.previewText,
-                formComponents = it.formComponents,
+                formComponents = it.formComponents(),
             )
         }
     }

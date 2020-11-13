@@ -39,12 +39,13 @@ class ToggleAction(
         override val name: String = ToggleAction::class.java.simpleName
         override val previewText: String = "Toggle action set: ..."
 
-        override val formComponents: List<FormComponent> = listOf(
+        override fun formComponents(): List<FormComponent> = listOf(
             FormComponent(
                 "actionSetToBeToggled",
                 "Toggle action set (name)",
-                FormComponent.Type.Text,
-                required = true
+                FormComponent.Type.Select,
+                required = true,
+                selectValues = Project.availableActionSets.map(ActionSet::name)
             ),
             FormComponent("startToggledOn", "Start toggled on", FormComponent.Type.Checkbox),
         )

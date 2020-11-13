@@ -17,7 +17,6 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
     }
 
     private getInput() {
-        const ref = React.createRef();
         switch (this.props.component.type) {
             case FormComponent.Type.Text:
                 return <input type='text'
@@ -61,6 +60,16 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
+            case FormComponent.Type.Select:
+                return <select name={this.props.component.name}
+                               required={this.props.component.required}
+                               className='formControl'>
+                    {this.props.component.selectValues.map((it, i) =>
+                        <option value={it}
+                                selected={it == this.props.component.defaultValue}
+                                key={i + it}>{it}</option>
+                    )}
+                </select>
             default:
                 return <p>empty</p>;
         }

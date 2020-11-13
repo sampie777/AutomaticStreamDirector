@@ -38,7 +38,7 @@ class HttpRequestAction(
         override val name: String = HttpRequestAction::class.java.simpleName
         override val previewText: String = "Do request / send content to URL..."
 
-        override val formComponents: List<FormComponent> = listOf(
+        override fun formComponents(): List<FormComponent> = listOf(
             FormComponent("url", "URL", FormComponent.Type.URL, required = true),
             FormComponent("sendBody", "Send with body?", FormComponent.Type.Checkbox),
             FormComponent("body", "Body", FormComponent.Type.Text),
