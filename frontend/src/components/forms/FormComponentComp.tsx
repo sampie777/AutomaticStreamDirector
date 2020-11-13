@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FormComponent, FormComponentType} from "./objects";
+import {FormComponent} from "./objects";
 
 interface ComponentProps {
     component: FormComponent,
@@ -19,43 +19,43 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
     private getInput() {
         const ref = React.createRef();
         switch (this.props.component.type) {
-            case FormComponentType.Text:
+            case FormComponent.Type.Text:
                 return <input type='text'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.Number:
+            case FormComponent.Type.Number:
                 return <input type='number'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.Date:
+            case FormComponent.Type.Date:
                 return <input type='date'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.Time:
+            case FormComponent.Type.Time:
                 return <input type='time'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.Checkbox:
+            case FormComponent.Type.Checkbox:
                 return <input type='checkbox'
                               name={this.props.component.name}
                               defaultChecked={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.URL:
+            case FormComponent.Type.URL:
                 return <input type='url'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
                               required={this.props.component.required}
                               className='formControl'/>
-            case FormComponentType.Password:
+            case FormComponent.Type.Password:
                 return <input type='password'
                               name={this.props.component.name}
                               defaultValue={this.props.component.defaultValue}
@@ -64,7 +64,6 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
             default:
                 return <p>empty</p>;
         }
-
     }
 
     render() {

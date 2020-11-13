@@ -5,7 +5,6 @@ import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
-import nl.sajansen.automaticstreamdirector.common.FormComponentType
 import nl.sajansen.automaticstreamdirector.modules.httpmodule.actions.HttpRequestAction
 import java.util.logging.Logger
 import kotlin.math.round
@@ -30,7 +29,12 @@ class DelayAction(
         override val name: String = DelayAction::class.java.simpleName
         override val previewText: String = "Wait ... seconds"
         override val formComponents: List<FormComponent> = listOf(
-            FormComponent("milliseconds", "Milli seconds", FormComponentType.Number, required = true),
+            FormComponent(
+                "milliseconds",
+                "Milli seconds",
+                FormComponent.Type.Number,
+                required = true
+            ),
         )
 
         @JvmStatic

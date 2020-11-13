@@ -3,7 +3,7 @@ import {Action, ActionSet, StaticAction} from "./objects";
 import StaticActionListComp from "./StaticActionListComp";
 import ActionItemComp from "./ActionItemComp";
 import FormComponentComp from "../forms/FormComponentComp";
-import {FormComponent, FormComponentType} from "../forms/objects";
+import {FormComponent} from "../forms/objects";
 import ActionFormComp from "./ActionFormComp";
 
 interface ComponentProps {
@@ -77,7 +77,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 new FormComponent(
                     "name",
                     "Name",
-                    FormComponentType.Text,
+                    FormComponent.Type.Text,
                     true,
                     this.actionSet?.name)}/>
 

@@ -5,7 +5,6 @@ import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
-import nl.sajansen.automaticstreamdirector.common.FormComponentType
 import org.eclipse.jetty.http.HttpMethod
 import requestConnection
 import java.util.logging.Logger
@@ -40,16 +39,16 @@ class HttpRequestAction(
         override val previewText: String = "Do request / send content to URL..."
 
         override val formComponents: List<FormComponent> = listOf(
-            FormComponent("url", "URL", FormComponentType.URL),
-            FormComponent("sendBody", "Send with body?", FormComponentType.Checkbox),
-            FormComponent("body", "Body", FormComponentType.Text),
-            FormComponent("method", "Method", FormComponentType.Text),
+            FormComponent("url", "URL", FormComponent.Type.URL, required = true),
+            FormComponent("sendBody", "Send with body?", FormComponent.Type.Checkbox),
+            FormComponent("body", "Body", FormComponent.Type.Text),
+            FormComponent("method", "Method", FormComponent.Type.Text, required = true),
         )
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
             val url = data["url"] ?: ""
-            val sendBody = data["sendBody"]?: "" == "on"
+            val sendBody = data["sendBody"] ?: "" == "on"
             val body = data["body"] ?: ""
             val method = data["method"] ?: ""
 

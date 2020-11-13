@@ -32,11 +32,15 @@ object Project {
         })
 
         availableActionSets.add(ActionSet("Toggle set").also {
-            val toggleAction1 = HttpRequestAction("http://localhost:8080/api/v1/actionsets/list")
-            it.actions.add(ToggleAction(toggleAction1, startToggledOn = true))
+            availableActionSets.add(ActionSet("To be toggled 1").also { set ->
+                set.actions.add(HttpRequestAction("http://localhost:8080/api/v1/actionsets/list"))
+                it.actions.add(ToggleAction(set, startToggledOn = true))
+            })
 
-            val toggleAction2 = HttpRequestAction("http://localhost:8080/api/v1/triggers/list")
-            it.actions.add(ToggleAction(toggleAction2, startToggledOn = false))
+            availableActionSets.add(ActionSet("To be toggled 1").also { set ->
+                set.actions.add(HttpRequestAction("http://localhost:8080/api/v1/triggers/list"))
+                it.actions.add(ToggleAction(set, startToggledOn = false))
+            })
         })
     }
 

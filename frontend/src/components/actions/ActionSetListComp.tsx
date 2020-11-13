@@ -49,7 +49,7 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
             <h3>ActionSets</h3>
             {this.state.actionSets.length > 0 ?
                 this.state.actionSets
-                    .map(actionSet => <ActionSetComp actionSet={actionSet} key={actionSet.name}/>)
+                    .map((actionSet, i) => <ActionSetComp actionSet={actionSet} key={i + actionSet.name}/>)
                 : <i>Much empty</i>}
         </div>;
     }
