@@ -27,9 +27,12 @@ export const api = {
         list: () => get(`${apiBaseUrl}/actionsets/list`),
         get: (name) => get(`${apiBaseUrl}/actionsets/${name}`),
     },
+    actions: {
+        list: () => get(`${apiBaseUrl}/actions/list`),
+        save: (data) => post(`${apiBaseUrl}/actions/save`, data),
+    },
     modules: {
         list: () => get(`${apiBaseUrl}/modules/list`),
-        actions: () => get(`${apiBaseUrl}/modules/actions`),
         conditions: () => get(`${apiBaseUrl}/modules/conditions`),
         get: (name) => get(`${apiBaseUrl}/modules/${name}`),
     },

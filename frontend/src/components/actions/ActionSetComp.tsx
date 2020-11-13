@@ -5,7 +5,10 @@ interface ComponentProps {
     actionSet: ActionSet,
 }
 
-export default class ActionSetComp extends Component<ComponentProps, any> {
+interface ComponentState {
+}
+
+export default class ActionSetComp extends Component<ComponentProps, ComponentState> {
     private actionSet: ActionSet;
 
     constructor(props: ComponentProps) {

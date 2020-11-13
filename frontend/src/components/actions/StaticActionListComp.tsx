@@ -5,6 +5,7 @@ import {StaticAction} from "./objects";
 import StaticActionItemComp from "./StaticActionItemComp";
 
 interface ComponentProps {
+    onItemClick: (action: StaticAction) => void,
 }
 
 interface ComponentState {
@@ -12,6 +13,10 @@ interface ComponentState {
 }
 
 export default class StaticActionListComp extends Component<ComponentProps, ComponentState> {
+    public static defaultProps = {
+        onItemClick: (action: StaticAction) => null,
+    };
+
     constructor(props: ComponentProps) {
         super(props);
 
@@ -27,7 +32,7 @@ export default class StaticActionListComp extends Component<ComponentProps, Comp
     }
 
     loadList() {
-        api.modules.actions()
+        api.actions.list()
             .then(response => response.json())
             .then(data => {
                 const actions = data.data;
@@ -49,7 +54,9 @@ export default class StaticActionListComp extends Component<ComponentProps, Comp
             <h3>Actions</h3>
             {this.state.actions.length > 0 ?
                 this.state.actions
-                    .map(action => <StaticActionItemComp action={action} key={action.className}/>)
+                    .map(action => <StaticActionItemComp staticAction={action}
+                                                         onClick={this.props.onItemClick}
+                                                         key={action.className}/>)
                 : <i>Much empty</i>}
         </div>;
     }

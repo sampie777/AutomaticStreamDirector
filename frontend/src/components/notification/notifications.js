@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import './notifications.css';
 
 export class Notification {
+    isRemoved = false;
+    timestamp = Date.now()
+
     constructor(title, message, type) {
         this.title = title;
         this.message = message;
@@ -31,7 +34,7 @@ export class NotificationComponent extends Component {
         window.addNotification = (notification) => this.addNotification(notification)
 
         this.addNotification = this.addNotification.bind(this)
-        this.removeNotification = this.removeNotification.bind(this)
+        this.removeRemovedNotifications = this.removeRemovedNotifications.bind(this)
     }
 
     addNotification(notification) {
@@ -47,19 +50,18 @@ export class NotificationComponent extends Component {
         });
     }
 
-    removeNotification(notification) {
-        const newList = this.state.notifications.filter(n => n !== notification);
+    removeRemovedNotifications() {
         this.setState({
-            notifications: newList
+            notifications: this.state.notifications.filter(it => !it.isRemoved)
         });
     }
 
     render() {
         return <div id="notifications">
-            {this.state.notifications.map(notification =>
+            {this.state.notifications.map((notification, i) =>
                 <NotificationMessage notification={notification}
-                                     key={notification.title}
-                                     remove={() => this.removeNotification(notification)}/>)}
+                                     key={i.toString() + notification.timestamp.toString()}
+                                     remove={this.removeRemovedNotifications}/>)}
         </div>;
     }
 }
@@ -70,33 +72,48 @@ class NotificationMessage extends Component {
         this.notification = props.notification;
 
         this.element = React.createRef();
+        this.removeTimeout = null;
 
         this.getTransitionDurationForElement = this.getTransitionDurationForElement.bind(this);
         this.removeNotification = this.removeNotification.bind(this);
+        this.removeElement = this.removeElement.bind(this);
     }
 
     componentDidMount() {
-        window.setTimeout(this.removeNotification, notificationDuration);
+        this.removeTimeout = window.setTimeout(this.removeNotification.bind(this), notificationDuration);
     }
 
     removeNotification() {
-        let element = this.element.current;
-        console.debug("Removing notification:", this);
+        window.clearTimeout(this.removeTimeout);
 
-        if (element === null){
-            console.debug("Notification already (being) removed");
-            return
+        const element = this.element.current;
+        console.debug("Removing notification:", this.notification);
+
+        if (element == null) {
+            console.debug("Notification DOM element already (being) removed");
+            return this.removeElement();
         }
 
         element.style.opacity = "0";
 
         const transitionDuration = this.getTransitionDurationForElement(element);
-        window.setTimeout(this.props.remove, transitionDuration);
+        window.setTimeout(this.removeElement, transitionDuration);
     }
 
     getTransitionDurationForElement(element) {
         const transitionDurationString = window.getComputedStyle(element).transitionDuration;
         return transitionDurationString.substring(0, transitionDurationString.length - 1) * 1000;
+    }
+
+    removeElement() {
+        const element = this.element.current;
+        if (element != null) {
+            element.style.display = "none";
+        }
+
+        this.notification.isRemoved = true;
+
+        this.props.remove();
     }
 
     render() {

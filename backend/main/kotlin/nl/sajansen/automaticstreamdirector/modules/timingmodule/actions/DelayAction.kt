@@ -3,6 +3,9 @@ package nl.sajansen.automaticstreamdirector.modules.timingmodule.actions
 
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
+import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
+import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.common.FormComponentType
 import nl.sajansen.automaticstreamdirector.modules.httpmodule.actions.HttpRequestAction
 import java.util.logging.Logger
 import kotlin.math.round
@@ -24,7 +27,20 @@ class DelayAction(
     override fun toString() = displayName()
 
     companion object : StaticAction {
-        override fun name(): String = DelayAction::class.java.simpleName
-        override fun previewText(): String = "Wait ... seconds"
+        override val name: String = DelayAction::class.java.simpleName
+        override val previewText: String = "Wait ... seconds"
+        override val formComponents: List<FormComponent> = listOf(
+            FormComponent("milliseconds", "Milli seconds", FormComponentType.Number, required = true),
+        )
+
+        @JvmStatic
+        override fun save(data: FormDataJson): Any {
+            val milliseconds = data["milliseconds"]?.toLongOrNull()
+            if (milliseconds == null || milliseconds <= 0) {
+                return listOf("Milli seconds must be greater than 0")
+            }
+
+            return DelayAction(milliseconds)
+        }
     }
 }

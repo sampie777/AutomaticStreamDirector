@@ -3,6 +3,9 @@ package nl.sajansen.automaticstreamdirector.modules.builtinmodule.actions
 
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
+import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
+import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.common.FormComponentType
 import java.util.logging.Logger
 
 class ToggleAction(
@@ -32,7 +35,19 @@ class ToggleAction(
     override fun toString() = displayName()
 
     companion object : StaticAction {
-        override fun name(): String = ToggleAction::class.java.simpleName
-        override fun previewText(): String = "Toggle action: ..."
+        override val name: String = ToggleAction::class.java.simpleName
+        override val previewText: String = "Toggle action: ..."
+
+        override val formComponents: List<FormComponent> = listOf(
+            FormComponent("startToggledOn", "Start toggled on", FormComponentType.Checkbox),
+        )
+
+        @JvmStatic
+        override fun save(data: FormDataJson): Any {
+            val milliseconds = data["startToggledOn"] == "on"
+
+            return listOf("Missing action to be toggled")
+//            return ToggleAction(startToggledOn)
+        }
     }
 }
