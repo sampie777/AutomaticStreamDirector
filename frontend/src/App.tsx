@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import {NotificationComponent} from "./components/notification/notifications";
 import TriggerListComp from "./components/triggers/TriggerListComp";
@@ -8,23 +8,39 @@ import StaticActionListComp from "./components/actions/StaticActionListComp";
 import StaticConditionListComp from "./components/triggers/StaticConditionListComp";
 import ActionSetFormComp from "./components/actions/ActionSetFormComp";
 
-function App() {
-  return (
-    <div className="App">
-      <NotificationComponent/>
 
-      <ActionSetFormComp  actionSet={null}/>
+interface ComponentProps {
+}
 
-      <DirectorStatusComp/>
-      <TriggerListComp/>
-      <ActionSetListComp/>
+interface ComponentState {
+}
 
-      <hr/>
+class App extends Component<ComponentProps, ComponentState> {
+    private readonly actionSetListComp: React.RefObject<ActionSetListComp>;
 
-      <StaticConditionListComp/>
-      <StaticActionListComp/>
-    </div>
-  );
+    constructor(props: ComponentProps) {
+        super(props);
+
+        this.actionSetListComp = React.createRef();
+    }
+
+    render() {
+        return <div className="App">
+            <NotificationComponent/>
+
+            <ActionSetFormComp actionSet={null}
+                               onSuccess={() => this.actionSetListComp.current?.loadList()}/>
+
+            <DirectorStatusComp/>
+            <TriggerListComp/>
+            <ActionSetListComp ref={this.actionSetListComp}/>
+
+            <hr/>
+
+            <StaticConditionListComp/>
+            <StaticActionListComp/>
+        </div>
+    }
 }
 
 export default App;

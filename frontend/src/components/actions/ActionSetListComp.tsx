@@ -27,6 +27,8 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
     }
 
     loadList() {
+        console.log("(Re)loading action sets list");
+
         api.actionSets.list()
             .then(response => response.json())
             .then(data => {

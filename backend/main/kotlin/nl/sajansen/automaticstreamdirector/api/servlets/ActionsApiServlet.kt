@@ -34,7 +34,7 @@ class ActionsApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
-            "/save" -> postActionSave(request, response)
+            "/save" -> postSave(request, response)
             else -> respondWithNotFound(response)
         }
     }
@@ -48,7 +48,7 @@ class ActionsApiServlet : HttpServlet() {
         respondWithJson(response, actions.map(StaticActionJson::from))
     }
 
-    private fun postActionSave(request: HttpServletRequest, response: HttpServletResponse) {
+    private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Saving Action")
 
         val json = request.body()

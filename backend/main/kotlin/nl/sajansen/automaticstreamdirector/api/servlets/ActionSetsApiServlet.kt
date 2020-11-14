@@ -1,6 +1,8 @@
 package nl.sajansen.automaticstreamdirector.api.servlets
 
 
+import com.google.gson.Gson
+import nl.sajansen.automaticstreamdirector.api.body
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.ActionSetJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
@@ -22,7 +24,10 @@ class ActionSetsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/list" -> getList(response)
-            in Regex(actionNameMatcher.pattern) -> getByName(response, request.pathInfo.getPathVariables(actionNameMatcher))
+            in Regex(actionNameMatcher.pattern) -> getByName(
+                response,
+                request.pathInfo.getPathVariables(actionNameMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -31,6 +36,7 @@ class ActionSetsApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
+            "/save" -> postSave(request, response)
             else -> respondWithNotFound(response)
         }
     }
@@ -53,6 +59,44 @@ class ActionSetsApiServlet : HttpServlet() {
             logger.info("Could not find ActionSet with name: $name")
             return respondWithJson(response, null)
         }
+
+        respondWithJson(response, actionSet.run(ActionSetJson::from))
+    }
+
+    private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Saving ActionSet")
+
+        val json = request.body()
+        val actionSetJson = Gson().fromJson(json, ActionSetJson::class.java)
+        logger.info(actionSetJson.toString())
+
+        val validationResult = arrayListOf<String>()
+
+        if (actionSetJson.name.isNullOrEmpty()) {
+            validationResult.add("Name must not be empty")
+        } else if (Project.availableActionSets.any { it.name == actionSetJson.name }) {
+            validationResult.add("Action set name already exists")
+        }
+
+        if (actionSetJson.actions.isEmpty()) {
+            validationResult.add("The action set must contain at least one action")
+        }
+
+        if (validationResult.isNotEmpty()) {
+            logger.info("Validation result: $validationResult")
+            return respondWithJson(response, validationResult)
+        }
+
+        val actionSet = try {
+            ActionSetJson.toActionSet(actionSetJson)
+        } catch (e: Exception) {
+            logger.severe("Could not create actionSet from json: $actionSetJson")
+            e.printStackTrace()
+            respondWithJson(response, "Something went wrong: ${e.localizedMessage}")
+            null
+        } ?: return
+
+        Project.availableActionSets.add(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))
     }
