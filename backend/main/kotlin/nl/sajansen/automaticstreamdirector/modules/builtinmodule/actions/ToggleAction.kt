@@ -37,8 +37,6 @@ class ToggleAction(
         return "Toggle action set: ${actionSetToBeToggled.name}"
     }
 
-    override fun toString() = displayName()
-
     override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
         DbDataSet(
             actionSetToBeToggledName = actionSetToBeToggled.name,

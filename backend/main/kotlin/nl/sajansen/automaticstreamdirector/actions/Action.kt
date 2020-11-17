@@ -25,8 +25,12 @@ abstract class Action {
         }
     }
 
-    open var id: Long? = null
+    abstract var id: Long?
     open var dbData: HashMap<String, Any?> = hashMapOf()
+
+    override fun toString(): String {
+        return "${this::class.java.simpleName}(id=$id, displayName=${displayName()})"
+    }
 
     abstract fun execute()
     abstract fun displayName(): String

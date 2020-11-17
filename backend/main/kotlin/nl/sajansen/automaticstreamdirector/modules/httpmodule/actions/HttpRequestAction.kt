@@ -36,8 +36,6 @@ class HttpRequestAction(
         }
     }
 
-    override fun toString() = displayName()
-
     override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
         DbDataSet(url, body, method)
     )

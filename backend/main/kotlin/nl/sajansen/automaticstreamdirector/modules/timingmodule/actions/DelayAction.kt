@@ -26,8 +26,6 @@ class DelayAction(
         return "Wait $seconds seconds"
     }
 
-    override fun toString() = displayName()
-
     override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
         DbDataSet(milliseconds)
     )

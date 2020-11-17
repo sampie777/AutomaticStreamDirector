@@ -4,7 +4,7 @@ package nl.sajansen.automaticstreamdirector.mocks
 import nl.sajansen.automaticstreamdirector.actions.Action
 import java.util.logging.Logger
 
-class ActionMock : Action() {
+class ActionMock(override var id: Long? = null) : Action() {
     private val logger = Logger.getLogger(ActionMock::class.java.name)
 
     var isExecuted = false
