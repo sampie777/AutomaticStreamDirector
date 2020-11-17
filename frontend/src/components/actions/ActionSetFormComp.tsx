@@ -121,7 +121,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         }
 
         const name = inputElement.value.trim();
-        const data = new ActionSet(name, this.state.selectedActions)
+        const data = new ActionSet(null, name, this.state.selectedActions)
 
         api.actionSets.save(data)
             .then(response => response.json())
@@ -130,15 +130,19 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 console.log("Save action set response: ", response);
 
                 if (response instanceof Array) {
-                    response.forEach(it =>
-                        addNotification(new Notification(`Error saving action set`, it, Notification.ERROR))
+                    return response.forEach(it =>
+                        addNotification(new Notification(`Could not save action set`, it, Notification.ERROR))
                     );
-                    return
+                }
+
+                if (response instanceof String) {
+                    return addNotification(new Notification(`Error saving action set`,
+                        response, Notification.ERROR))
                 }
 
                 if (response ! instanceof ActionSet) {
-                    addNotification(new Notification(`Error saving action set`, "Unexpected response", Notification.ERROR));
-                    return
+                    return addNotification(new Notification(`Error saving action set`,
+                        "Unexpected response", Notification.ERROR));
                 }
 
                 addNotification(new Notification(`Saved action set`, response.name, Notification.SUCCESS));

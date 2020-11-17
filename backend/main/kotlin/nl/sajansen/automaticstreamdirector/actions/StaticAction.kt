@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.actions
 
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
 
 interface StaticAction {
     val name: String
@@ -13,4 +14,6 @@ interface StaticAction {
      * Returns List<String> for validation errors. Else Action if successful.
      */
     fun save(data: FormDataJson): Any
+
+    fun fromDbEntity(actionEntity: ActionEntity): Action?
 }

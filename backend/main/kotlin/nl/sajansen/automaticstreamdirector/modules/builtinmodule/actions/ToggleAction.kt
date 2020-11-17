@@ -1,18 +1,22 @@
 package nl.sajansen.automaticstreamdirector.modules.builtinmodule.actions
 
 
+import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.ActionSet
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 
 class ToggleAction(
     private val actionSetToBeToggled: ActionSet,
-    startToggledOn: Boolean = true
-) : Action {
+    private val startToggledOn: Boolean = true,
+    override var id: Long? = null,
+) : Action() {
     private val logger = Logger.getLogger(ToggleAction::class.java.name)
 
     private var nextToggle = !startToggledOn
@@ -34,6 +38,18 @@ class ToggleAction(
     }
 
     override fun toString() = displayName()
+
+    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
+        DbDataSet(
+            actionSetToBeToggledName = actionSetToBeToggled.name,
+            startToggledOn = startToggledOn,
+        )
+    )
+
+    data class DbDataSet(
+        val actionSetToBeToggledName: String,
+        val startToggledOn: Boolean,
+    )
 
     companion object : StaticAction {
         override val name: String = ToggleAction::class.java.simpleName
@@ -61,7 +77,24 @@ class ToggleAction(
                 return listOf("Action set '$actionSetToBeToggled' not found")
             }
 
-            return ToggleAction(actionSet, startToggledOn)
+            ToggleAction(actionSet, startToggledOn).also {
+                saveOrUpdate(it)
+                return it
+            }
+        }
+
+        override fun fromDbEntity(actionEntity: ActionEntity): Action? {
+            val data = Gson().fromJson(actionEntity.dataString, DbDataSet::class.java)
+
+            val actionSetToBeToggled = Project.availableActionSets.find {
+                it.name == data.actionSetToBeToggledName
+            } ?: return null
+
+            return ToggleAction(
+                actionSetToBeToggled = actionSetToBeToggled,
+                startToggledOn = data.startToggledOn,
+                id = actionEntity.id,
+            )
         }
     }
 }

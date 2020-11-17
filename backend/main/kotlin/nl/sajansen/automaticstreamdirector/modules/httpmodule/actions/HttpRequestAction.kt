@@ -1,10 +1,13 @@
 package nl.sajansen.automaticstreamdirector.modules.httpmodule.actions
 
 
+import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import org.eclipse.jetty.http.HttpMethod
 import requestConnection
 import java.util.logging.Logger
@@ -12,8 +15,9 @@ import java.util.logging.Logger
 class HttpRequestAction(
     val url: String,
     val body: String? = null,
-    val method: HttpMethod = HttpMethod.GET
-) : Action {
+    val method: HttpMethod = HttpMethod.GET,
+    override var id: Long? = null,
+) : Action() {
     private val logger = Logger.getLogger(HttpRequestAction::class.java.name)
 
     override fun execute() {
@@ -33,6 +37,16 @@ class HttpRequestAction(
     }
 
     override fun toString() = displayName()
+
+    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
+        DbDataSet(url, body, method)
+    )
+
+    data class DbDataSet(
+        val url: String,
+        val body: String?,
+        val method: HttpMethod,
+    )
 
     companion object : StaticAction {
         override val name: String = HttpRequestAction::class.java.simpleName
@@ -69,7 +83,22 @@ class HttpRequestAction(
                 return errors
             }
 
-            return HttpRequestAction(url, if (sendBody) body else null, httpMethod!!)
+            HttpRequestAction(url, if (sendBody) body else null, httpMethod!!)
+                .also {
+                    saveOrUpdate(it)
+                    return it
+                }
+        }
+
+        override fun fromDbEntity(actionEntity: ActionEntity): Action? {
+            val data = Gson().fromJson(actionEntity.dataString, DbDataSet::class.java)
+
+            return HttpRequestAction(
+                data.url,
+                data.body,
+                data.method,
+                id = actionEntity.id,
+            )
         }
     }
 }

@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import com.google.gson.Gson
+import nl.sajansen.automaticstreamdirector.actions.ActionSet
 import nl.sajansen.automaticstreamdirector.api.body
 import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.ActionSetJson
@@ -72,7 +73,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
         val validationResult = arrayListOf<String>()
 
-        if (actionSetJson.name.isNullOrEmpty()) {
+        if (actionSetJson.name.isEmpty()) {
             validationResult.add("Name must not be empty")
         } else if (Project.availableActionSets.any { it.name == actionSetJson.name }) {
             validationResult.add("Action set name already exists")
@@ -96,6 +97,7 @@ class ActionSetsApiServlet : HttpServlet() {
             null
         } ?: return
 
+        ActionSet.saveOrUpdate(actionSet)
         Project.availableActionSets.add(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))

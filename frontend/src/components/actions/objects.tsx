@@ -1,19 +1,24 @@
 import {FormComponent} from "../forms/objects";
 
 export class Action {
+    id: number | null;
     name: string;
 
-    constructor(name: string) {
+    constructor(id: number | null, name: string) {
+        this.id = id
         this.name = name;
     }
 }
 
 export class ActionSet {
+    id: number | null;
     name: string;
     actions: Array<Action>;
 
-    constructor(name: string,
+    constructor(id: number | null,
+                name: string,
                 actions: Array<Action>) {
+        this.id = id
         this.name = name;
         this.actions = actions;
     }

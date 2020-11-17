@@ -7,12 +7,14 @@ import DirectorStatusComp from "./components/director/DirectorStatusComp";
 import StaticActionListComp from "./components/actions/StaticActionListComp";
 import StaticConditionListComp from "./components/triggers/StaticConditionListComp";
 import ActionSetFormComp from "./components/actions/ActionSetFormComp";
+import {ActionSet} from "./components/actions/objects";
 
 
 interface ComponentProps {
 }
 
 interface ComponentState {
+    editingActionSet: ActionSet | null,
 }
 
 class App extends Component<ComponentProps, ComponentState> {
@@ -21,6 +23,10 @@ class App extends Component<ComponentProps, ComponentState> {
     constructor(props: ComponentProps) {
         super(props);
 
+        this.state = {
+            editingActionSet: null,
+        }
+
         this.actionSetListComp = React.createRef();
     }
 
@@ -28,8 +34,13 @@ class App extends Component<ComponentProps, ComponentState> {
         return <div className="App">
             <NotificationComponent/>
 
-            <ActionSetFormComp actionSet={null}
-                               onSuccess={() => this.actionSetListComp.current?.loadList()}/>
+            <ActionSetFormComp actionSet={this.state.editingActionSet}
+                               onSuccess={(actionSet) => {
+                                   this.actionSetListComp.current?.loadList();
+                                   this.setState({
+                                       editingActionSet: actionSet,
+                                   });
+                               }}/>
 
             <DirectorStatusComp/>
             <TriggerListComp/>

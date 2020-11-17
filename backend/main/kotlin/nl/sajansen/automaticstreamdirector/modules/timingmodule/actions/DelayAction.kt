@@ -1,18 +1,21 @@
 package nl.sajansen.automaticstreamdirector.modules.timingmodule.actions
 
 
+import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
-import nl.sajansen.automaticstreamdirector.modules.httpmodule.actions.HttpRequestAction
+import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import java.util.logging.Logger
 import kotlin.math.round
 
 class DelayAction(
-    val milliseconds: Long
-) : Action {
-    private val logger = Logger.getLogger(HttpRequestAction::class.java.name)
+    private val milliseconds: Long,
+    override var id: Long? = null,
+) : Action() {
+    private val logger = Logger.getLogger(DelayAction::class.java.name)
 
     override fun execute() {
         Thread.sleep(milliseconds)
@@ -25,9 +28,18 @@ class DelayAction(
 
     override fun toString() = displayName()
 
+    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
+        DbDataSet(milliseconds)
+    )
+
+    data class DbDataSet(
+        val milliseconds: Long
+    )
+
     companion object : StaticAction {
         override val name: String = DelayAction::class.java.simpleName
         override val previewText: String = "Wait ... seconds"
+
         override fun formComponents(): List<FormComponent> = listOf(
             FormComponent(
                 "milliseconds",
@@ -44,7 +56,19 @@ class DelayAction(
                 return listOf("Milli seconds must be greater than 0")
             }
 
-            return DelayAction(milliseconds)
+            DelayAction(milliseconds).also {
+                saveOrUpdate(it)
+                return it
+            }
+        }
+
+        override fun fromDbEntity(actionEntity: ActionEntity): Action? {
+            val data = Gson().fromJson(actionEntity.dataString, DbDataSet::class.java)
+
+            return DelayAction(
+                data.milliseconds,
+                id = actionEntity.id,
+            )
         }
     }
 }

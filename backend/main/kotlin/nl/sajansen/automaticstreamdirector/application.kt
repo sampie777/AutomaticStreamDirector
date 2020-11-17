@@ -2,6 +2,7 @@ package nl.sajansen.automaticstreamdirector
 
 import nl.sajansen.automaticstreamdirector.api.ApiServer
 import nl.sajansen.automaticstreamdirector.config.Config
+import nl.sajansen.automaticstreamdirector.db.DB
 import nl.sajansen.automaticstreamdirector.modules.Modules
 import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
@@ -23,6 +24,8 @@ fun main(args: Array<String>) {
 
     Modules.loadAll()
 
+    DB.connect()
+
     Project.load()
 
     ApiServer.start()
@@ -35,6 +38,8 @@ fun exitApplication() {
     logger.info("Shutting down application")
 
     ApiServer.stop()
+
+    DB.disconnect()
 
     logger.info("Shutdown finished")
     exitProcess(0)

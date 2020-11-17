@@ -4,26 +4,23 @@ import nl.sajansen.automaticstreamdirector.actions.Action
 
 
 data class ActionJson(
+    val id: Long?,
     val name: String,
 ) {
 
     companion object {
         fun from(it: Action): ActionJson {
             return ActionJson(
+                id = it.id,
                 name = it.displayName(),
             )
         }
 
         fun toAction(it: ActionJson): Action {
-            return object : Action{
-                override fun execute() {
-
-                }
-
-                override fun displayName(): String {
-                    return "NOT IMPLEMENTED"
-                }
+            if (it.id == null) {
+                throw IllegalArgumentException("Cannot convert Action which hasn't been saved first (id = null): $it")
             }
+            return Action.get(it.id) ?: throw IllegalArgumentException("Could not find action: $it")
         }
     }
 }
