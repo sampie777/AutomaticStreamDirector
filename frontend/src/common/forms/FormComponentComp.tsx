@@ -72,12 +72,12 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
             case FormComponent.Type.Select:
                 return <select name={this.props.component.name}
                                ref={this.props.inputRef}
+                               defaultValue={this.props.component.defaultValue}
                                required={this.props.component.required}
                                className='formControl'>
                     {this.props.component.selectValues.map((it, i) =>
                         <option value={it.value}
                                 ref={this.props.inputRef}
-                                selected={it == this.props.component.defaultValue}
                                 key={i + it.value}>{it.text}</option>
                     )}
                 </select>

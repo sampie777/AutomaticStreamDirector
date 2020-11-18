@@ -37,9 +37,6 @@ class App extends Component<ComponentProps, ComponentState> {
             <ActionSetFormComp actionSet={this.state.editingActionSet}
                                onSuccess={(actionSet) => {
                                    this.actionSetListComp.current?.loadList();
-                                   this.setState({
-                                       editingActionSet: actionSet,
-                                   });
                                }}/>
 
             <DirectorStatusComp/>

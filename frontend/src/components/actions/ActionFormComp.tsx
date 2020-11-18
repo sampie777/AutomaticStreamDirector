@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Action, StaticAction} from "./objects";
 import './actions.sass';
-import FormComponentComp from "../forms/FormComponentComp";
+import FormComponentComp from "../../common/forms/FormComponentComp";
 import {Form} from "semantic-ui-react";
 import {FormProps} from "semantic-ui-react/dist/commonjs/collections/Form/Form";
 import {api} from "../../api";

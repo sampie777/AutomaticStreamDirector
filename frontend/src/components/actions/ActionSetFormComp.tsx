@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Action, ActionSet, StaticAction} from "./objects";
 import StaticActionListComp from "./StaticActionListComp";
 import ActionItemComp from "./ActionItemComp";
-import FormComponentComp from "../forms/FormComponentComp";
-import {FormComponent} from "../forms/objects";
+import FormComponentComp from "../../common/forms/FormComponentComp";
+import {FormComponent} from "../../common/forms/objects";
 import ActionFormComp from "./ActionFormComp";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
@@ -17,6 +17,7 @@ interface ComponentProps {
 interface ComponentState {
     selectedActions: Array<Action>,
     newAction: StaticAction | null,
+    actionSet: ActionSet | null,
 }
 
 export default class ActionSetFormComp extends Component<ComponentProps, ComponentState> {
@@ -25,17 +26,15 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         onCancel: () => null,
     };
 
-    private readonly actionSet: ActionSet | null;
-
     private readonly nameInputRef: React.RefObject<HTMLInputElement>;
 
     constructor(props: ComponentProps) {
         super(props);
-        this.actionSet = props.actionSet;
 
         this.state = {
             selectedActions: [],
             newAction: null,
+            actionSet: props.actionSet != null ? props.actionSet : new ActionSet(null, "", []),
         }
 
         this.nameInputRef = React.createRef();
@@ -48,8 +47,9 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
     }
 
     render() {
+        console.log("Renering:", this.state.actionSet);
         return <div>
-            <div>{this.actionSet == null ? "New action set" : `Edit '${this.actionSet.name}'`}</div>
+            <div>{this.state.actionSet == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}</div>
 
             <FormComponentComp
                 inputRef={this.nameInputRef}
@@ -59,7 +59,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                         "Name",
                         FormComponent.Type.Text,
                         true,
-                        this.actionSet?.name)}/>
+                        this.state.actionSet?.name)}/>
 
             <div className={"component-list"}>
                 <h3>Selected actions</h3>
@@ -121,7 +121,8 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         }
 
         const name = inputElement.value.trim();
-        const data = new ActionSet(null, name, this.state.selectedActions)
+        const id = this.state.actionSet?.id || null;
+        const data = new ActionSet(id, name, this.state.selectedActions)
 
         api.actionSets.save(data)
             .then(response => response.json())
@@ -146,6 +147,10 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 }
 
                 addNotification(new Notification(`Saved action set`, response.name, Notification.SUCCESS));
+                console.log("response: ", response);
+                this.setState({
+                    actionSet: response,
+                });
                 this.props.onSuccess(response);
             })
             .catch(error => {

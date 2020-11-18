@@ -92,7 +92,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
         if (actionSetJson.name.isEmpty()) {
             validationResult.add("Name must not be empty")
-        } else if (Project.availableActionSets.any { it.name == actionSetJson.name }) {
+        } else if (Project.availableActionSets.any { it.id != actionSetJson.id && it.name == actionSetJson.name }) {
             validationResult.add("Action set name already exists")
         }
 
@@ -115,6 +115,8 @@ class ActionSetsApiServlet : HttpServlet() {
         } ?: return
 
         ActionSet.saveOrUpdate(actionSet)
+
+        Project.availableActionSets.removeIf { it.id == actionSet.id }
         Project.availableActionSets.add(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))

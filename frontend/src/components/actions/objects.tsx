@@ -1,4 +1,4 @@
-import {FormComponent} from "../forms/objects";
+import {FormComponent} from "../../common/forms/objects";
 
 export class Action {
     id: number | null;
