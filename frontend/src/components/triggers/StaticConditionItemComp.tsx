@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StaticCondition} from "./objects";
 import './trigger.sass';
+import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
 
 interface ComponentProps {
     condition: StaticCondition,
@@ -18,9 +19,9 @@ export default class StaticConditionItemComp extends Component<ComponentProps, C
     }
 
     render() {
-        return <div>
+        return <ComponentListItemComp>
             <div className={"StaticConditionItemComp-name"}>{this.condition.name}</div>
             <div className={"StaticConditionItemComp-previewText"}>{this.condition.previewText}</div>
-        </div>;
+        </ComponentListItemComp>;
     }
 }

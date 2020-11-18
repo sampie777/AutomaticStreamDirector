@@ -32,7 +32,7 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
         return <ComponentListItemComp onEditClick={this.onEditClick}
                                       onDeleteClick={this.onDeleteClick}
                                       onDoubleClick={this.onEditClick}>
-            <div>{this.actionSet.name}</div>
+            <h3>{this.actionSet.name}</h3>
             <ol>
                 {this.actionSet.actions.map((it, i) => <li key={i + it.name}>{it.name}</li>)}
             </ol>
