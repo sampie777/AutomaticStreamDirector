@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Action} from "./objects";
 import './actions.sass';
+import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
 
 interface ComponentProps {
     action: Action,
@@ -16,8 +17,8 @@ export default class ActionItemComp extends Component<ComponentProps, ComponentS
     }
 
     render() {
-        return <div onClick={() => this.props.onClick(this.props.action)}>
+        return <ComponentListItemComp onDeleteClick={() => this.props.onClick(this.props.action)}>
             <div className={"ActionItemComp-name"}>{this.props.action.name}</div>
-        </div>;
+        </ComponentListItemComp>;
     }
 }

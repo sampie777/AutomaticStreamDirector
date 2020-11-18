@@ -4,7 +4,6 @@ import {NotificationComponent} from "./components/notification/notifications";
 import TriggerListComp from "./components/triggers/TriggerListComp";
 import ActionSetListComp from "./components/actions/ActionSetListComp";
 import DirectorStatusComp from "./components/director/DirectorStatusComp";
-import StaticActionListComp from "./components/actions/StaticActionListComp";
 import StaticConditionListComp from "./components/triggers/StaticConditionListComp";
 import ActionSetFormComp from "./components/actions/ActionSetFormComp";
 import {ActionSet} from "./components/actions/objects";
@@ -62,7 +61,6 @@ class App extends Component<ComponentProps, ComponentState> {
             <hr/>
 
             <StaticConditionListComp/>
-            <StaticActionListComp/>
         </div>
     }
 }

@@ -3,6 +3,7 @@ import {ActionSet} from "./objects";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import App from "../../App";
+import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
 
 interface ComponentProps {
     actionSet: ActionSet,
@@ -28,15 +29,14 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
     }
 
     render() {
-        return <div>
+        return <ComponentListItemComp onEditClick={this.onEditClick}
+                                      onDeleteClick={this.onDeleteClick}
+                                      onDoubleClick={this.onEditClick}>
             <div>{this.actionSet.name}</div>
             <ol>
                 {this.actionSet.actions.map((it, i) => <li key={i + it.name}>{it.name}</li>)}
             </ol>
-
-            <a onClick={this.onEditClick} className={"edit"}>Edit</a>
-            <a onClick={this.onDeleteClick} className={"delete"}>Delete</a>
-        </div>;
+        </ComponentListItemComp>;
     }
 
     private onEditClick() {

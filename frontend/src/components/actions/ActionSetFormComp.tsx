@@ -50,8 +50,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
     render() {
         return <Modal centered={false}
                       open={true}
-                      onClose={this.props.onCancel}
-                      className={'ScheduleItemEditModal'}>
+                      onClose={this.props.onCancel}>
             <Modal.Header>
                 {this.state.actionSet.id == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}
             </Modal.Header>

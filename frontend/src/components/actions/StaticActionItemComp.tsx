@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StaticAction} from "./objects";
 import './actions.sass';
+import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
 
 interface ComponentProps {
     staticAction: StaticAction,
@@ -19,9 +20,9 @@ export default class StaticActionItemComp extends Component<ComponentProps, Comp
     }
 
     render() {
-        return <div onClick={() => this.props.onClick(this.staticAction)}>
+        return <ComponentListItemComp onClick={() => this.props.onClick(this.staticAction)}>
             <div className={"StaticActionItemComp-name"}>{this.staticAction.name}</div>
             <div className={"StaticActionItemComp-previewText"}>{this.staticAction.previewText}</div>
-        </div>;
+        </ComponentListItemComp>;
     }
 }
