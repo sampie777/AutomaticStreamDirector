@@ -23,10 +23,13 @@ abstract class Action {
             val actionEntity = ActionEntity.get(id) ?: return null
             return actionEntity.run(ActionEntity::toAction)
         }
+
+        fun delete(id: Long): Boolean {
+            return ActionEntity.delete(id)
+        }
     }
 
     abstract var id: Long?
-    open var dbData: HashMap<String, Any?> = hashMapOf()
 
     override fun toString(): String {
         return "${this::class.java.simpleName}(id=$id, displayName=${displayName()})"

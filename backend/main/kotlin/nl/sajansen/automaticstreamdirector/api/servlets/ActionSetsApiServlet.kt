@@ -19,6 +19,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
     private val actionNameMatcher = """^/(\w+)$""".toRegex()
+    private val idMatcher = """^/delete/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
@@ -38,6 +39,22 @@ class ActionSetsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
+            in Regex(idMatcher.pattern) -> deleteById(
+                response,
+                request.pathInfo.getPathVariables(idMatcher)
+            )
+            else -> respondWithNotFound(response)
+        }
+    }
+
+    override fun doDelete(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Processing ${request.method} request from : ${request.requestURI}")
+
+        when (request.pathInfo) {
+            in Regex(idMatcher.pattern) -> deleteById(
+                response,
+                request.pathInfo.getPathVariables(idMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -101,5 +118,20 @@ class ActionSetsApiServlet : HttpServlet() {
         Project.availableActionSets.add(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))
+    }
+
+    private fun deleteById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Deleting ActionSet with id: $id")
+
+        val actionSet = Project.availableActionSets.find { it.id == id }
+
+        if (actionSet == null) {
+            logger.info("Could not find ActionSet with id: $id")
+            return respondWithJson(response, null)
+        }
+
+        Project.availableActionSets.remove(actionSet)
+        respondWithJson(response, ActionSet.delete(id))
     }
 }

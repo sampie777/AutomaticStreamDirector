@@ -20,12 +20,12 @@ data class ActionSet(
     private var actionEntities: List<ActionEntity> = emptyList()
 
     companion object : CommonDbManager<ActionSet>(ActionSet::class.java) {
-        override fun saveOrUpdate(obj: ActionSet) {
+        override fun saveOrUpdate(obj: ActionSet): Boolean {
             obj.actionEntities = obj.actions.map(ActionEntity::fromAction)
             obj.actionEntities.forEach {
                 it.actionSet = obj
             }
-            super.saveOrUpdate(obj)
+            return super.saveOrUpdate(obj)
         }
 
         override fun list(): MutableList<ActionSet?>? {

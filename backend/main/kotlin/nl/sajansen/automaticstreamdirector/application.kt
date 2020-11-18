@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 
     ApiServer.start()
 
-    Director.start()
+//    Director.start()
 }
 
 

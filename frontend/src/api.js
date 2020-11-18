@@ -6,7 +6,7 @@ const get = (url) => fetch(url, {
 });
 
 const post = (url, data = "") => {
-    let headers = {
+    const headers = {
         'Content-Type': 'application/json'
     };
 
@@ -14,6 +14,20 @@ const post = (url, data = "") => {
         method: "POST",
         body: JSON.stringify(data),
         headers: headers
+    });
+}
+
+const remove = (url, data = "") => {
+    throw Error("Cannot perform DELETE request due to Cross Origin failures on server side")
+
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    return fetch(url, {
+        method: "DELETE",
+        body: JSON.stringify(data),
+        headers: headers,
     });
 }
 
@@ -27,6 +41,7 @@ export const api = {
         list: () => get(`${apiBaseUrl}/actionsets/list`),
         get: (name) => get(`${apiBaseUrl}/actionsets/${name}`),
         save: (data) => post(`${apiBaseUrl}/actionsets/save`, data),
+        delete: (id) => post(`${apiBaseUrl}/actionsets/delete/${id}`),
     },
     actions: {
         list: () => get(`${apiBaseUrl}/actions/list`),

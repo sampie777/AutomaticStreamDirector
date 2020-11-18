@@ -24,7 +24,7 @@ export default class TriggerComp extends Component<ComponentProps, ComponentStat
             isEditing: false
         };
 
-        this.editTrigger = this.editTrigger.bind(this);
+        this.onEditClick = this.onEditClick.bind(this);
         this.onUpdated = this.onUpdated.bind(this);
     }
 
@@ -38,14 +38,14 @@ export default class TriggerComp extends Component<ComponentProps, ComponentStat
                 {this.trigger.actionSets.map((it: ActionSet) => <li key={it.name}>{it.name}</li>)}
             </ol>
 
-            <a onClick={this.editTrigger} className={"edit"}>Edit</a>
+            <a onClick={this.onEditClick} className={"edit"}>Edit</a>
 
             {!this.state.isEditing ? "" : <TriggerEditFormComp trigger={this.trigger}
                                                                onUpdated={this.onUpdated} />}
         </div>;
     }
 
-    private editTrigger() {
+    private onEditClick() {
         this.setState({
             isEditing: !this.state.isEditing
         });
