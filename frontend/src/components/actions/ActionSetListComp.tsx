@@ -3,6 +3,7 @@ import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {ActionSet} from "./objects";
 import ActionSetComp from "./ActionSetComp";
+import NewActionSetButtonComp from "./NewActionSetButtonComp";
 
 interface ComponentProps {
 }
@@ -49,6 +50,9 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
     render() {
         return <div className={"component-list"}>
             <h3>ActionSets</h3>
+
+            <NewActionSetButtonComp />
+
             {this.state.actionSets.length > 0 ?
                 this.state.actionSets
                     .map((actionSet, i) => <ActionSetComp actionSet={actionSet}

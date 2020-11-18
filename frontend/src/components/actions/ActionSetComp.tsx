@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {ActionSet} from "./objects";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
+import App from "../../App";
 
 interface ComponentProps {
     actionSet: ActionSet,
@@ -39,6 +40,7 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
     }
 
     private onEditClick() {
+        App.editActionSet(this.actionSet);
     }
 
     private onDeleteClick() {

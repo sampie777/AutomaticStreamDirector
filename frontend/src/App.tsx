@@ -14,8 +14,9 @@ interface ComponentProps {
 }
 
 interface ComponentState {
-    editingActionSet: ActionSet | null,
+    editActionSet: ActionSet | null | undefined,    // null: new, undefined: none
 }
+
 
 class App extends Component<ComponentProps, ComponentState> {
     private readonly actionSetListComp: React.RefObject<ActionSetListComp>;
@@ -24,20 +25,35 @@ class App extends Component<ComponentProps, ComponentState> {
         super(props);
 
         this.state = {
-            editingActionSet: null,
+            editActionSet: undefined,
         }
 
         this.actionSetListComp = React.createRef();
+
+        this._editActionSet = this._editActionSet.bind(this);
+        App.editActionSet = this._editActionSet;
+    }
+
+    static editActionSet = (actionSet: ActionSet | null | undefined) => console.error("Function not defined yet");
+
+    private _editActionSet(actionSet: ActionSet | null | undefined) {
+        console.log("On editActionSet click")
+        this.setState({
+            editActionSet: actionSet
+        })
     }
 
     render() {
         return <div className="App">
             <NotificationComponent/>
 
-            <ActionSetFormComp actionSet={this.state.editingActionSet}
-                               onSuccess={(actionSet) => {
-                                   this.actionSetListComp.current?.loadList();
-                               }}/>
+            {this.state.editActionSet === undefined ? "" :
+                <ActionSetFormComp actionSet={this.state.editActionSet}
+                                   onSuccess={(actionSet) => {
+                                       this.actionSetListComp.current?.loadList();
+                                   }}
+                                   onCancel={() => this.setState({editActionSet: undefined})}
+                />}
 
             <DirectorStatusComp/>
             <TriggerListComp/>

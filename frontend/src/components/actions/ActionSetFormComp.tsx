@@ -7,6 +7,7 @@ import {FormComponent} from "../../common/forms/objects";
 import ActionFormComp from "./ActionFormComp";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
+import {Modal} from "semantic-ui-react";
 
 interface ComponentProps {
     actionSet: ActionSet | null,
@@ -17,7 +18,7 @@ interface ComponentProps {
 interface ComponentState {
     selectedActions: Array<Action>,
     newAction: StaticAction | null,
-    actionSet: ActionSet | null,
+    actionSet: ActionSet,
 }
 
 export default class ActionSetFormComp extends Component<ComponentProps, ComponentState> {
@@ -32,7 +33,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         super(props);
 
         this.state = {
-            selectedActions: [],
+            selectedActions: props.actionSet?.actions || [],
             newAction: null,
             actionSet: props.actionSet != null ? props.actionSet : new ActionSet(null, "", []),
         }
@@ -47,38 +48,46 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
     }
 
     render() {
-        console.log("Renering:", this.state.actionSet);
-        return <div>
-            <div>{this.state.actionSet == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}</div>
+        return <Modal centered={false}
+                      open={true}
+                      onClose={this.props.onCancel}
+                      className={'ScheduleItemEditModal'}>
+            <Modal.Header>
+                {this.state.actionSet.id == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}
+            </Modal.Header>
+            <Modal.Content scrolling>
+                <Modal.Description>
+                    <FormComponentComp
+                        inputRef={this.nameInputRef}
+                        component={
+                            new FormComponent(
+                                "name",
+                                "Name",
+                                FormComponent.Type.Text,
+                                true,
+                                this.state.actionSet.name)}/>
 
-            <FormComponentComp
-                inputRef={this.nameInputRef}
-                component={
-                    new FormComponent(
-                        "name",
-                        "Name",
-                        FormComponent.Type.Text,
-                        true,
-                        this.state.actionSet?.name)}/>
+                    <div className={"component-list"}>
+                        <h3>Selected actions</h3>
+                        {this.state.selectedActions
+                            .map((action, i) => <ActionItemComp action={action}
+                                                                onClick={this.onActionItemClickRemove}
+                                                                key={i}/>)
+                        }
+                    </div>
 
-            <div className={"component-list"}>
-                <h3>Selected actions</h3>
-                {this.state.selectedActions
-                    .map((action, i) => <ActionItemComp action={action}
-                                                        onClick={this.onActionItemClickRemove}
-                                                        key={i}/>)
-                }
-            </div>
+                    <StaticActionListComp onItemClick={this.onActionItemClickAdd}/>
 
-            <StaticActionListComp onItemClick={this.onActionItemClickAdd}/>
-
-            {this.state.newAction == null ? "" :
-                <ActionFormComp staticAction={this.state.newAction} onSuccess={this.onActionSaved}
-                                onCancel={this.onActionSaveCancelled}/>}
-
-            <button type={'submit'} onClick={this.onSave}>Save</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-        </div>;
+                    {this.state.newAction == null ? "" :
+                        <ActionFormComp staticAction={this.state.newAction} onSuccess={this.onActionSaved}
+                                        onCancel={this.onActionSaveCancelled}/>}
+                </Modal.Description>
+            </Modal.Content>
+            <Modal.Actions>
+                <button type={'submit'} onClick={this.onSave}>Save</button>
+                <button onClick={this.props.onCancel}>Cancel</button>
+            </Modal.Actions>
+        </Modal>;
     }
 
     private onActionItemClickAdd(action: StaticAction) {
@@ -121,7 +130,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         }
 
         const name = inputElement.value.trim();
-        const id = this.state.actionSet?.id || null;
+        const id = this.state.actionSet.id;
         const data = new ActionSet(id, name, this.state.selectedActions)
 
         api.actionSets.save(data)
@@ -147,7 +156,6 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 }
 
                 addNotification(new Notification(`Saved action set`, response.name, Notification.SUCCESS));
-                console.log("response: ", response);
                 this.setState({
                     actionSet: response,
                 });

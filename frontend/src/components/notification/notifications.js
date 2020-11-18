@@ -20,7 +20,7 @@ export class Notification {
 const notificationDuration = 10_000;
 
 export function addNotification(notification) {
-    window.addNotification(notification);
+    NotificationComponent.addNotification(notification);
 }
 
 export class NotificationComponent extends Component {
@@ -31,13 +31,16 @@ export class NotificationComponent extends Component {
             notifications: []
         }
 
-        window.addNotification = (notification) => this.addNotification(notification)
+        window.addNotification = (notification) => this._addNotification(notification)
 
-        this.addNotification = this.addNotification.bind(this)
+        this._addNotification = this._addNotification.bind(this)
+        NotificationComponent.addNotification = this._addNotification;
         this.removeRemovedNotifications = this.removeRemovedNotifications.bind(this)
     }
 
-    addNotification(notification) {
+    static addNotification = (notification) => console.error("Function not defined yet");
+
+    _addNotification(notification) {
         if (!(notification instanceof Notification)) {
             console.error("Cannot add notification, not a valid instance: ", notification);
             return
