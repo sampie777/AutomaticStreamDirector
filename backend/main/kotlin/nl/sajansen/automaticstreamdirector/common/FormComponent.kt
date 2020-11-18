@@ -8,7 +8,7 @@ data class FormComponent (
     val defaultValue: Any? = null,
     val value: Any? = null,
 
-    val selectValues: List<String> = emptyList()
+    val selectValues: List<SelectOption> = emptyList()
 ) {
     enum class Type{
         Text,
@@ -20,4 +20,9 @@ data class FormComponent (
         Password,
         Select,
     }
+
+    data class SelectOption(
+        val value: Any?,
+        val text: String = value.toString(),
+    )
 }

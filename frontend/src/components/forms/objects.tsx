@@ -5,7 +5,7 @@ export class FormComponent {
     required: boolean;
     defaultValue: any;
 
-    selectValues: Array<string>;
+    selectValues: Array<SelectOption>;
 
     constructor(
         name: string,
@@ -13,7 +13,7 @@ export class FormComponent {
         type: string,
         required: boolean = true,
         defaultValue: any = null,
-        selectValues: Array<string> = [],
+        selectValues: Array<SelectOption> = [],
     ) {
         this.name = name;
         this.labelText = labelText;
@@ -32,5 +32,17 @@ export class FormComponent {
         URL: "URL",
         Password: "Password",
         Select: "Select",
+    }
+
+    static SelectOption = (value: any | null, text: string) => new SelectOption(value, text)
+}
+
+class SelectOption {
+    value: any | null;
+    text: string;
+
+    constructor(name: any | null, text: string) {
+        this.value = name;
+        this.text = text;
     }
 }

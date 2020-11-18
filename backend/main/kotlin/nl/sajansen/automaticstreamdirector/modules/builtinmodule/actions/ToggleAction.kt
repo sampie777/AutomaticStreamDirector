@@ -13,13 +13,19 @@ import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 
 class ToggleAction(
-    private val actionSetToBeToggled: ActionSet,
+    private val actionSetToBeToggledId: Long? = null,
     private val startToggledOn: Boolean = true,
     override var id: Long? = null,
 ) : Action() {
     private val logger = Logger.getLogger(ToggleAction::class.java.name)
 
     private var nextToggle = !startToggledOn
+
+    private fun getActionSetToBeToggled(): ActionSet? {
+        return Project.availableActionSets.find {
+            it.id == actionSetToBeToggledId
+        }
+    }
 
     override fun execute() {
         nextToggle = !nextToggle
@@ -29,23 +35,23 @@ class ToggleAction(
             return
         }
 
-        logger.info("Action toggled on. Executing toggle actionSet: ${actionSetToBeToggled.name}")
-        actionSetToBeToggled.execute()
+        logger.info("Action toggled on. Executing toggle actionSet: ${getActionSetToBeToggled()?.name}")
+        getActionSetToBeToggled()?.execute()
     }
 
     override fun displayName(): String {
-        return "Toggle action set: ${actionSetToBeToggled.name}"
+        return "Toggle action set: ${getActionSetToBeToggled()?.name}"
     }
 
     override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
         DbDataSet(
-            actionSetToBeToggledName = actionSetToBeToggled.name,
+            actionSetToBeToggledId = getActionSetToBeToggled()?.id,
             startToggledOn = startToggledOn,
         )
     )
 
     data class DbDataSet(
-        val actionSetToBeToggledName: String,
+        val actionSetToBeToggledId: Long?,
         val startToggledOn: Boolean,
     )
 
@@ -59,23 +65,28 @@ class ToggleAction(
                 "Toggle action set (name)",
                 FormComponent.Type.Select,
                 required = true,
-                selectValues = Project.availableActionSets.map(ActionSet::name)
+                selectValues = Project.availableActionSets.map {
+                    FormComponent.SelectOption(it.id, it.name)
+                }
             ),
             FormComponent("startToggledOn", "Start toggled on", FormComponent.Type.Checkbox),
         )
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
-            val actionSetToBeToggled = data["actionSetToBeToggled"]
+            val actionSetToBeToggledId = data["actionSetToBeToggled"]?.toLongOrNull()
             val startToggledOn = data["startToggledOn"] == "on"
 
-            val actionSet = Project.availableActionSets.find { it.name == actionSetToBeToggled }
+            val actionSet = Project.availableActionSets.find { it.id == actionSetToBeToggledId }
 
             if (actionSet == null) {
-                return listOf("Action set '$actionSetToBeToggled' not found")
+                return listOf("Action set with id=$actionSetToBeToggledId not found")
             }
 
-            ToggleAction(actionSet, startToggledOn).also {
+            ToggleAction(
+                actionSetToBeToggledId = actionSet.id,
+                startToggledOn = startToggledOn
+            ).also {
                 saveOrUpdate(it)
                 return it
             }
@@ -84,12 +95,8 @@ class ToggleAction(
         override fun fromDbEntity(actionEntity: ActionEntity): Action? {
             val data = Gson().fromJson(actionEntity.dataString, DbDataSet::class.java)
 
-            val actionSetToBeToggled = Project.availableActionSets.find {
-                it.name == data.actionSetToBeToggledName
-            } ?: return null
-
             return ToggleAction(
-                actionSetToBeToggled = actionSetToBeToggled,
+                actionSetToBeToggledId = data.actionSetToBeToggledId,
                 startToggledOn = data.startToggledOn,
                 id = actionEntity.id,
             )
