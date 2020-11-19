@@ -93,11 +93,11 @@ class TriggersApiServlet : HttpServlet() {
         if (triggerJson.name.isEmpty()) {
             validationResult.add("Name must not be empty")
         } else if (Project.triggers.any { it.id != triggerJson.id && it.name == triggerJson.name }) {
-            validationResult.add("Condition set name already exists")
+            validationResult.add("Trigger name already exists")
         }
 
         if (triggerJson.conditions.isEmpty()) {
-            validationResult.add("The condition set must contain at least one condition")
+            validationResult.add("The trigger must contain at least one condition")
         }
 
         if (validationResult.isNotEmpty()) {

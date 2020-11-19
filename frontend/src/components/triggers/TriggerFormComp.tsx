@@ -55,7 +55,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                       onClose={this.props.onCancel}
                       className={"TriggerFormComp"}>
             <Modal.Header>
-                {this.state.trigger.id == null ? "New condition set" : `Edit '${this.state.trigger.name}'`}
+                {this.state.trigger.id == null ? "New trigger" : `Edit '${this.state.trigger.name}'`}
             </Modal.Header>
             <Modal.Content scrolling>
                 <Modal.Description>
@@ -154,33 +154,33 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
             .then(response => response.json())
             .then(data => {
                 const response = data.data;
-                console.log("Save condition set response: ", response);
+                console.log("Save trigger response: ", response);
 
                 if (response instanceof Array) {
                     return response.forEach(it =>
-                        addNotification(new Notification(`Could not save condition set`, it, Notification.ERROR))
+                        addNotification(new Notification(`Could not save trigger`, it, Notification.ERROR))
                     );
                 }
 
                 if (response instanceof String) {
-                    return addNotification(new Notification(`Error saving condition set`,
+                    return addNotification(new Notification(`Error saving trigger`,
                         response, Notification.ERROR))
                 }
 
                 if (response ! instanceof Trigger) {
-                    return addNotification(new Notification(`Error saving condition set`,
+                    return addNotification(new Notification(`Error saving trigger`,
                         "Unexpected response", Notification.ERROR));
                 }
 
-                addNotification(new Notification(`Saved condition set`, response.name, Notification.SUCCESS));
+                addNotification(new Notification(`Saved trigger`, response.name, Notification.SUCCESS));
                 this.setState({
                     trigger: response,
                 });
                 this.props.onSuccess(response);
             })
             .catch(error => {
-                console.error('Error saving condition set', error);
-                addNotification(new Notification(`Error saving condition set`, error.message, Notification.ERROR));
+                console.error('Error saving trigger', error);
+                addNotification(new Notification(`Error saving trigger`, error.message, Notification.ERROR));
             });
     }
 }

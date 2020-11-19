@@ -37,13 +37,16 @@ export default class TriggerComp extends Component<ComponentProps, ComponentStat
                                       onDoubleClick={this.onEditClick}>
             <h3>{this.trigger.name} <span className={"importance"}>{this.trigger.importance}</span></h3>
 
+            <h4>conditions</h4>
             <div className={"conditions"}>
-                {this.trigger.conditions.map((it: Condition) =>
+                {this.trigger.conditions.length == 0 ? <i>none</i> : this.trigger.conditions.map((it: Condition) =>
                     <div title={it.name}
                          key={it.name}>{it.name}</div>)}
             </div>
+
+            <h4>action sets</h4>
             <div className={"actionsets"}>
-                {this.trigger.actionSets.map((it: ActionSet) =>
+                {this.trigger.actionSets.length == 0 ? <i>none</i> : this.trigger.actionSets.map((it: ActionSet) =>
                     <div title={it.name}
                          key={it.name}>{it.name}</div>)}
             </div>
