@@ -27,6 +27,7 @@ object ApiServer {
         logger.fine("Registering API endpoints")
         apiServletContextHandler.addServlet(ConfigApiServlet::class.java, "/config/*")
         apiServletContextHandler.addServlet(TriggersApiServlet::class.java, "/triggers/*")
+        apiServletContextHandler.addServlet(ConditionsApiServlet::class.java, "/conditions/*")
         apiServletContextHandler.addServlet(ActionSetsApiServlet::class.java, "/actionsets/*")
         apiServletContextHandler.addServlet(ActionsApiServlet::class.java, "/actions/*")
         apiServletContextHandler.addServlet(DirectorApiServlet::class.java, "/director/*")

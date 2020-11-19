@@ -3,14 +3,48 @@
   .importance
     font-size: 80%
 
-  .edit
-    position: absolute
-    right: 0
-    bottom: 0
-    margin: 8px 15px
+  .conditions
+    & > div
+      border: 1px solid #ddd
+      border-radius: 5px
+      padding: 10px 25px
+      margin: 7px 0
+      background-color: #f1f1f1
+      color: #444
+      font-size: 80%
+      font-weight: 100
 
-.StaticConditionItemComp-name
-  font-weight: bold
+.StaticConditionItemComp
+  .name
+    font-weight: 100
 
-.StaticConditionItemComp-previewText
-  font-style: italic
+  .previewText
+    font-style: italic
+    font-size: 77%
+
+  form
+    margin-top: 14px
+
+.ConditionItemComp
+  .name
+    font-weight: 100
+
+.TriggerFormComp
+  .name-input-form-group
+    display: flex
+
+    *
+      align-self: center
+
+    input
+      width: 100%
+
+  .conditions-lists
+    display: flex
+    margin-top: 28px
+
+    & > div
+      width: 100%
+
+      &:not(:first-child)
+        margin-left: 20px

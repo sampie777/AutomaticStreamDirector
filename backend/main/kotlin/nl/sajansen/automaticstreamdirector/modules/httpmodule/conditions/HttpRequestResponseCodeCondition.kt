@@ -53,10 +53,9 @@ class HttpRequestResponseCodeCondition(
         override val previewText: String = "If URL responds with code..."
 
         override fun formComponents() = listOf(
-            FormComponent("url", "URL", FormComponent.Type.URL),
-            FormComponent("body", "Send with body", FormComponent.Type.TextArea),
+            FormComponent("url", "URL", FormComponent.Type.URL, required = true),
             FormComponent(
-                "method", "HTTP method", FormComponent.Type.Select,
+                "method", "HTTP method", FormComponent.Type.Select, required = true,
                 selectValues = listOf(
                     FormComponent.SelectOption(HttpMethod.GET.name),
                     FormComponent.SelectOption(HttpMethod.POST.name),
@@ -64,6 +63,7 @@ class HttpRequestResponseCodeCondition(
                     FormComponent.SelectOption(HttpMethod.DELETE.name),
                 )
             ),
+            FormComponent("body", "Send with body", FormComponent.Type.TextArea),
             FormComponent("expectedCode", "Expected response code", FormComponent.Type.Number),
         )
 

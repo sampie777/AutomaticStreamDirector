@@ -1,22 +1,33 @@
 import React, {Component} from 'react';
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
-import {StaticCondition} from "./objects";
+import {Condition, StaticCondition} from "./objects";
 import StaticConditionItemComp from "./StaticConditionItemComp";
 
 interface ComponentProps {
+    onItemClick: (condition: StaticCondition) => void,
+    showFormForStaticCondition: StaticCondition | null,
+    onConditionSaved: (condition: Condition) => void,
+    onConditionSaveCancelled: () => void,
 }
 
 interface ComponentState {
-    conditions: Array<StaticCondition>,
+    staticConditions: Array<StaticCondition>,
 }
 
 export default class StaticConditionListComp extends Component<ComponentProps, ComponentState> {
+    public static defaultProps = {
+        onItemClick: (condition: StaticCondition) => null,
+        showFormForStaticCondition: null,
+        onConditionSaved: () => null,
+        onConditionSaveCancelled: () => null,
+    };
+    
     constructor(props: ComponentProps) {
         super(props);
 
         this.state = {
-            conditions: [],
+            staticConditions: [],
         };
 
         this.loadList = this.loadList.bind(this);
@@ -27,15 +38,15 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
     }
 
     loadList() {
-        api.modules.conditions()
+        api.conditions.list()
             .then(response => response.json())
             .then(data => {
-                const conditions = data.data;
+                const staticConditions = data.data;
 
-                console.log("Loaded conditions list:", conditions);
+                console.log("Loaded static conditions list:", staticConditions);
 
                 this.setState({
-                    conditions: conditions
+                    staticConditions: staticConditions
                 });
             })
             .catch(error => {
@@ -46,10 +57,15 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
 
     render() {
         return <div className={"component-list"}>
-            <h3>Conditions</h3>
-            {this.state.conditions.length > 0 ?
-                this.state.conditions
-                    .map(condition => <StaticConditionItemComp condition={condition} key={condition.className}/>)
+            <h3>Available conditions</h3>
+            {this.state.staticConditions.length > 0 ?
+                this.state.staticConditions
+                    .map(staticConditions => <StaticConditionItemComp staticCondition={staticConditions}
+                                                                showForm={staticConditions == this.props.showFormForStaticCondition}
+                                                                onClick={this.props.onItemClick}
+                                                                onConditionSaved={this.props.onConditionSaved}
+                                                                onConditionSaveCancelled={this.props.onConditionSaveCancelled}
+                                                                key={staticConditions.className}/>)
                 : <i>Much empty</i>}
         </div>;
     }

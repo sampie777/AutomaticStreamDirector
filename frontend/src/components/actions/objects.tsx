@@ -5,7 +5,7 @@ export class Action {
     name: string;
 
     constructor(id: number | null, name: string) {
-        this.id = id
+        this.id = id;
         this.name = name;
     }
 }
@@ -18,7 +18,7 @@ export class ActionSet {
     constructor(id: number | null,
                 name: string,
                 actions: Array<Action>) {
-        this.id = id
+        this.id = id;
         this.name = name;
         this.actions = actions;
     }

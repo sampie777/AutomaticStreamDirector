@@ -10,6 +10,7 @@ import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.*
 import java.util.logging.Logger
 
@@ -55,14 +56,16 @@ class DateCondition(
         override val previewText: String = "If today is [d-M-yyyy (H:mm)]"
 
         override fun formComponents() = listOf(
-            FormComponent("date", "Date", FormComponent.Type.Date),
+            FormComponent("date", "Date", FormComponent.Type.Date, required = true),
             FormComponent("matchTime", "Match time", FormComponent.Type.Checkbox),
+            FormComponent("time", "Time", FormComponent.Type.Time),
         )
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
             val dateString = data["date"] ?: ""
             val matchTime = data["matchTime"] == "on"
+            val timeString = data["time"] ?: ""
 
             val validationErrors = arrayListOf<String>()
 
@@ -70,13 +73,32 @@ class DateCondition(
                 validationErrors.add("Date cannot be left empty")
             }
 
-            val date = try {
+            var date = try {
                 SimpleDateFormat("dd-MM-yyyy").parse(dateString)
             } catch (e: Exception) {
                 logger.warning("Could not parse date: $dateString")
                 e.printStackTrace()
                 validationErrors.add("Entered date format is invalid")
                 null
+            }
+
+            if (matchTime) {
+                if (timeString.isEmpty()) {
+                    validationErrors.add("Time cannot be left empty")
+                }
+
+                val time = try {
+                    LocalTime.parse(timeString)
+                } catch (e: Exception) {
+                    logger.warning("Could not parse time: $timeString")
+                    e.printStackTrace()
+                    validationErrors.add("Entered time format is invalid")
+                    null
+                }
+
+                if (date != null && time != null) {
+                    date = Date(date.time + time.toSecondOfDay() * 1000)
+                }
             }
 
             if (validationErrors.isNotEmpty()) {

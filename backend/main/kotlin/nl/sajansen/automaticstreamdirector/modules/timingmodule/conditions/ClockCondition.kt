@@ -50,7 +50,7 @@ class ClockCondition(
         override val previewText: String = "If current time is [H:mm(:ss)]"
 
         override fun formComponents() = listOf(
-            FormComponent("time", "Time", FormComponent.Type.Time),
+            FormComponent("time", "Time", FormComponent.Type.Time, required = true),
             FormComponent("matchSeconds", "Match seconds", FormComponent.Type.Checkbox),
         )
 

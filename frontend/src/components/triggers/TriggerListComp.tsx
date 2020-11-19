@@ -4,6 +4,7 @@ import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Trigger} from "./objects";
 import './trigger.sass';
+import NewTriggerButtonComp from "./NewTriggerButtonComp";
 
 interface ComponentProps {
 }
@@ -27,7 +28,9 @@ export default class TriggerListComp extends Component<ComponentProps, Component
         this.loadList()
     }
 
-    private loadList() {
+    loadList() {
+        console.log("(Re)loading triggers list");
+
         api.triggers.list()
             .then(response => response.json())
             .then(data => {
@@ -48,12 +51,15 @@ export default class TriggerListComp extends Component<ComponentProps, Component
     render() {
         return <div className={"component-list"}>
             <h3>Triggers</h3>
+
+            <NewTriggerButtonComp />
+
             {this.state.triggers.length > 0 ?
                 this.state.triggers
                     .sort(((a, b) => b.importance - a.importance))
-                    .map(trigger => <TriggerComp trigger={trigger}
-                                                 onUpdated={this.loadList}
-                                                 key={trigger.name + trigger.importance}/>)
+                    .map((trigger, i) => <TriggerComp trigger={trigger}
+                                                 onDelete={this.loadList}
+                                                 key={i + trigger.name}/>)
                 : <i>Much empty</i>}
         </div>;
     }

@@ -35,7 +35,12 @@ export const api = {
     triggers: {
         list: () => get(`${apiBaseUrl}/triggers/list`),
         get: (name) => get(`${apiBaseUrl}/triggers/${name}`),
-        save: (trigger) => post(`${apiBaseUrl}/triggers/save`, trigger),
+        save: (data) => post(`${apiBaseUrl}/triggers/save`, data),
+        delete: (id) => post(`${apiBaseUrl}/actionsets/delete/${id}`),
+    },
+    conditions: {
+        list: () => get(`${apiBaseUrl}/conditions/list`),
+        save: (data) => post(`${apiBaseUrl}/conditions/save`, data),
     },
     actionSets: {
         list: () => get(`${apiBaseUrl}/actionsets/list`),

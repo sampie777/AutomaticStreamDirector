@@ -39,7 +39,7 @@ class RandomNumberCondition(
         override val previewText = "If I'm lucky for [...] %"
 
         override fun formComponents() = listOf(
-            FormComponent("chance", "Chance (0% - 100%)", FormComponent.Type.Number),
+            FormComponent("chance", "Chance (0% - 100%)", FormComponent.Type.Number, required = true),
         )
         
         @JvmStatic

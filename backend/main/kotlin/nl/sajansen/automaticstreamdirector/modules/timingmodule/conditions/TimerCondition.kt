@@ -48,7 +48,7 @@ class TimerCondition(
         override val previewText: String = "If [...] seconds went by"
 
         override fun formComponents() = listOf(
-            FormComponent("seconds", "Seconds", FormComponent.Type.Number),
+            FormComponent("seconds", "Seconds", FormComponent.Type.Number, required = true),
         )
 
         @JvmStatic

@@ -1,27 +1,41 @@
 import React, {Component} from 'react';
-import {StaticCondition} from "./objects";
+import {Condition, StaticCondition} from "./objects";
 import './trigger.sass';
 import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
+import ConditionFormComp from "./ConditionFormComp";
 
 interface ComponentProps {
-    condition: StaticCondition,
+    staticCondition: StaticCondition,
+    onClick: (condition: StaticCondition) => void,
+    showForm: boolean,
+    onConditionSaved: (condition: Condition) => void,
+    onConditionSaveCancelled: () => void,
 }
 
 interface ComponentState {
 }
 
 export default class StaticConditionItemComp extends Component<ComponentProps, ComponentState> {
-    private condition: StaticCondition;
+    public static defaultProps = {
+        showForm: false,
+        onConditionSaved: () => null,
+        onConditionSaveCancelled: () => null,
+    }
 
     constructor(props: ComponentProps) {
         super(props);
-        this.condition = props.condition;
     }
 
     render() {
-        return <ComponentListItemComp>
-            <div className={"StaticConditionItemComp-name"}>{this.condition.name}</div>
-            <div className={"StaticConditionItemComp-previewText"}>{this.condition.previewText}</div>
+        return <ComponentListItemComp className={"StaticConditionItemComp"}
+                                      onClick={() => this.props.onClick(this.props.staticCondition)}>
+            <div className={"name"}>{this.props.staticCondition.name}</div>
+            <div className={"previewText"}>{this.props.staticCondition.previewText}</div>
+
+            {!this.props.showForm ? "" :
+                <ConditionFormComp staticCondition={this.props.staticCondition}
+                                onSuccess={this.props.onConditionSaved}
+                                onCancel={this.props.onConditionSaveCancelled}/>}
         </ComponentListItemComp>;
     }
 }

@@ -1,68 +1,80 @@
 import React, {Component} from 'react';
 import {Condition, Trigger} from "./objects";
 import {ActionSet} from "../actions/objects";
-import TriggerEditFormComp from "./TriggerEditFormComp";
 import './trigger.sass';
 import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
+import App from "../../App";
+import {addNotification, Notification} from "../notification/notifications";
+import {api} from "../../api";
 
 interface ComponentProps {
     trigger: Trigger,
-    onUpdated: Function
+    onDelete: () => void,
 }
 
 interface ComponentState {
-    isEditing: boolean
 }
 
 export default class TriggerComp extends Component<ComponentProps, ComponentState> {
+    public static defaultProps = {
+        onDelete: () => null,
+    }
+
     private readonly trigger: Trigger;
 
     constructor(props: ComponentProps) {
         super(props);
         this.trigger = props.trigger;
 
-        this.state = {
-            isEditing: false
-        };
-
         this.onEditClick = this.onEditClick.bind(this);
         this.onDeleteClick = this.onDeleteClick.bind(this);
-        this.onUpdated = this.onUpdated.bind(this);
     }
 
     render() {
-        return <ComponentListItemComp onEditClick={this.onEditClick}
-                                      // onDeleteClick={this.onDeleteClick}
+        return <ComponentListItemComp className={"TriggerComp"}
+                                      onEditClick={this.onEditClick}
+                                      onDeleteClick={this.onDeleteClick}
                                       onDoubleClick={this.onEditClick}>
             <h3>{this.trigger.name} <span className={"importance"}>{this.trigger.importance}</span></h3>
 
-            <ol>
-                {this.trigger.conditions.map((it: Condition) => <li key={it.name}>{it.name}</li>)}
-            </ol>
-            <ol>
-                {this.trigger.actionSets.map((it: ActionSet) => <li key={it.name}>{it.name}</li>)}
-            </ol>
-
-            {!this.state.isEditing ? "" : <TriggerEditFormComp trigger={this.trigger}
-                                                               onUpdated={this.onUpdated} />}
+            <div className={"conditions"}>
+                {this.trigger.conditions.map((it: Condition) =>
+                    <div title={it.name}
+                         key={it.name}>{it.name}</div>)}
+            </div>
+            <div className={"actionsets"}>
+                {this.trigger.actionSets.map((it: ActionSet) =>
+                    <div title={it.name}
+                         key={it.name}>{it.name}</div>)}
+            </div>
         </ComponentListItemComp>;
     }
 
     private onEditClick() {
-        this.setState({
-            isEditing: !this.state.isEditing
-        });
+        App.editTrigger(this.trigger);
     }
 
     private onDeleteClick() {
+        const choice = window.confirm(`Are you sure you want to delete ${this.trigger.name}?`)
 
-    }
+        if (!choice) {
+            return;
+        }
 
-    private onUpdated() {
-        this.setState({
-            isEditing: false
-        });
+        api.triggers.delete(this.trigger.id)
+            .then(response => response.json())
+            .then(data => {
+                const result = data.data;
 
-        this.props.onUpdated();
+                if (!result) {
+                    return addNotification(new Notification("Failed to delete Trigger", "", Notification.ERROR));
+                }
+
+                this.props.onDelete()
+            })
+            .catch(error => {
+                console.error('Error deleting Trigger', error);
+                addNotification(new Notification("Error deleting Trigger", error.message, Notification.ERROR));
+            });
     }
 }
