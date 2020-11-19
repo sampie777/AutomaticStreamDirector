@@ -25,6 +25,7 @@ export class FormComponent {
 
     static Type = {
         Text: "Text",
+        TextArea: "TextArea",
         Number: "Number",
         Date: "Date",
         Time: "Time",

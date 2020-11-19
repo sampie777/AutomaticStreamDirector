@@ -1,7 +1,12 @@
 package nl.sajansen.automaticstreamdirector.modules.timingmodule.conditions
 
 
+import com.google.gson.Gson
+import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
+import nl.sajansen.automaticstreamdirector.common.FormComponent
+import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 import nl.sajansen.automaticstreamdirector.getTimeAsClock
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.*
@@ -9,7 +14,8 @@ import java.util.logging.Logger
 
 class TimerCondition(
     val seconds: Long,
-) : Condition {
+    override var id: Long? = null,
+) : Condition() {
     private val logger = Logger.getLogger(TimerCondition::class.java.name)
 
     private var startTime = Date()
@@ -29,10 +35,51 @@ class TimerCondition(
         return "If ${getTimeAsClock(seconds, looseFormat = true)} went by"
     }
 
-    override fun toString() = displayName()
+    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
+        DbDataSet(seconds = seconds)
+    )
+
+    data class DbDataSet(
+        val seconds: Long,
+    )
 
     companion object : StaticCondition {
-        override fun name(): String = TimerCondition::class.java.simpleName
-        override fun previewText(): String = "If [...] seconds went by"
+        override val name: String = TimerCondition::class.java.simpleName
+        override val previewText: String = "If [...] seconds went by"
+
+        override fun formComponents() = listOf(
+            FormComponent("seconds", "Seconds", FormComponent.Type.Number),
+        )
+
+        @JvmStatic
+        override fun save(data: FormDataJson): Any {
+            val seconds = data["seconds"]?.toLongOrNull()
+
+            val validationErrors = arrayListOf<String>()
+
+            if (seconds == null || seconds <= 0) {
+                validationErrors.add("Time must be greater than 0 seconds")
+            }
+
+            if (validationErrors.isNotEmpty()) {
+                return validationErrors
+            }
+
+            TimerCondition(
+                seconds = seconds!!,
+            ).also {
+                saveOrUpdate(it)
+                return it
+            }
+        }
+
+        override fun fromDbEntity(conditionEntity: ConditionEntity): Condition? {
+            val data = Gson().fromJson(conditionEntity.dataString, DbDataSet::class.java)
+
+            return TimerCondition(
+                seconds = data.seconds,
+                id = conditionEntity.id,
+            )
+        }
     }
 }

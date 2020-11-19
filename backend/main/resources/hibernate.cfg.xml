@@ -14,6 +14,8 @@
         <!-- Classes -->
         <mapping class="nl.sajansen.automaticstreamdirector.db.entities.ActionEntity"/>
         <mapping class="nl.sajansen.automaticstreamdirector.actions.ActionSet"/>
+        <mapping class="nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity"/>
+        <mapping class="nl.sajansen.automaticstreamdirector.triggers.Trigger"/>
 
     </session-factory>
 </hibernate-configuration>

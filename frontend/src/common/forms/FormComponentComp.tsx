@@ -83,6 +83,12 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
                                 key={i + it.value}>{it.text}</option>
                     )}
                 </select>
+            case FormComponent.Type.TextArea:
+                return <textarea name={this.props.component.name}
+                                 ref={this.props.inputRef}
+                                 defaultValue={this.props.component.defaultValue}
+                                 required={this.props.component.required}
+                                 className='formControl'/>
             default:
                 return <p>empty</p>;
         }

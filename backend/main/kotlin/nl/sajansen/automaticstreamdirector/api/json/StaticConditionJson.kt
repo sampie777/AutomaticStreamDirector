@@ -13,8 +13,8 @@ data class StaticConditionJson(
         fun from(it: StaticCondition): StaticConditionJson {
             return StaticConditionJson(
                 className = it::class.java.name,
-                name = it.name(),
-                previewText = it.previewText(),
+                name = it.name,
+                previewText = it.previewText,
             )
         }
     }

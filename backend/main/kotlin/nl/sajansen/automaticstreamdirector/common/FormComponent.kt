@@ -12,6 +12,7 @@ data class FormComponent (
 ) {
     enum class Type{
         Text,
+        TextArea,
         Number,
         Date,
         Time,
