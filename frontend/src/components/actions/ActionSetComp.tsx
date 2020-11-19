@@ -62,6 +62,7 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
                     return addNotification(new Notification("Failed to delete ActionSet", "", Notification.ERROR));
                 }
 
+                addNotification(new Notification("Action set deleted", this.props.actionSet.name, Notification.SUCCESS));
                 this.props.onDelete()
             })
             .catch(error => {

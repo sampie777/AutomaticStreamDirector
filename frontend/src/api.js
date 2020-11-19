@@ -36,7 +36,7 @@ export const api = {
         list: () => get(`${apiBaseUrl}/triggers/list`),
         get: (name) => get(`${apiBaseUrl}/triggers/${name}`),
         save: (data) => post(`${apiBaseUrl}/triggers/save`, data),
-        delete: (id) => post(`${apiBaseUrl}/actionsets/delete/${id}`),
+        delete: (id) => post(`${apiBaseUrl}/triggers/delete/${id}`),
     },
     conditions: {
         list: () => get(`${apiBaseUrl}/conditions/list`),

@@ -35,7 +35,10 @@ export default class TriggerComp extends Component<ComponentProps, ComponentStat
                                       onEditClick={this.onEditClick}
                                       onDeleteClick={this.onDeleteClick}
                                       onDoubleClick={this.onEditClick}>
-            <h3>{this.trigger.name} <span className={"importance"}>{this.trigger.importance}</span></h3>
+            <h3>
+                {this.trigger.name}
+                <div title={"Importance"} className={"importance"}>{this.trigger.importance}</div>
+            </h3>
 
             <h4>conditions</h4>
             <div className={"conditions"}>
@@ -73,6 +76,7 @@ export default class TriggerComp extends Component<ComponentProps, ComponentStat
                     return addNotification(new Notification("Failed to delete Trigger", "", Notification.ERROR));
                 }
 
+                addNotification(new Notification("Trigger deleted", this.props.trigger.name, Notification.SUCCESS));
                 this.props.onDelete()
             })
             .catch(error => {
