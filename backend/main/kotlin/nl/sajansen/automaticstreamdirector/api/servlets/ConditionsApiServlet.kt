@@ -2,20 +2,20 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 
 import com.google.gson.Gson
-import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.api.body
-import nl.sajansen.automaticstreamdirector.api.json.ActionJson
+import nl.sajansen.automaticstreamdirector.api.json.ConditionJson
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
-import nl.sajansen.automaticstreamdirector.api.json.StaticActionJson
+import nl.sajansen.automaticstreamdirector.api.json.StaticConditionJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.modules.Modules
+import nl.sajansen.automaticstreamdirector.triggers.Condition
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class ActionsApiServlet : HttpServlet() {
+class ConditionsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
@@ -24,7 +24,7 @@ class ActionsApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
-            "/list" -> getStaticActions(response)
+            "/list" -> getStaticConditions(response)
             else -> respondWithNotFound(response)
         }
     }
@@ -38,16 +38,16 @@ class ActionsApiServlet : HttpServlet() {
         }
     }
 
-    private fun getStaticActions(response: HttpServletResponse) {
-        logger.info("Getting Static Actions for modules")
+    private fun getStaticConditions(response: HttpServletResponse) {
+        logger.info("Getting Static Conditions for modules")
 
-        val actions = Modules.actions()
+        val conditions = Modules.conditions()
 
-        respondWithJson(response, actions.map(StaticActionJson::from))
+        respondWithJson(response, conditions.map(StaticConditionJson::from))
     }
 
     private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
-        logger.info("Saving Action")
+        logger.info("Saving Condition")
 
         val json = request.body()
         val jsonObject = Gson().fromJson(json, FormDataJson::class.java)
@@ -81,10 +81,10 @@ class ActionsApiServlet : HttpServlet() {
         if (result is List<*>) {
             return respondWithJson(response, result)
         }
-        if (result !is Action) {
+        if (result !is Condition) {
             return respondWithJson(response, "Something went wrong")
         }
 
-        respondWithJson(response, result.run(ActionJson::from))
+        respondWithJson(response, result.run(ConditionJson::from))
     }
 }

@@ -8,6 +8,7 @@ import nl.sajansen.automaticstreamdirector.api.json.TriggerJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.project.Project
+import nl.sajansen.automaticstreamdirector.triggers.Trigger
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -18,13 +19,17 @@ class TriggersApiServlet : HttpServlet() {
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
     private val triggerNameMatcher = """^/(\w+)$""".toRegex()
+    private val idMatcher = """^/delete/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
             "/list" -> getList(response)
-            in Regex(triggerNameMatcher.pattern) -> getByName(response, request.pathInfo.getPathVariables(triggerNameMatcher))
+            in Regex(triggerNameMatcher.pattern) -> getByName(
+                response,
+                request.pathInfo.getPathVariables(triggerNameMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -34,6 +39,22 @@ class TriggersApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
+            in Regex(idMatcher.pattern) -> deleteById(
+                response,
+                request.pathInfo.getPathVariables(idMatcher)
+            )
+            else -> respondWithNotFound(response)
+        }
+    }
+
+    override fun doDelete(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Processing ${request.method} request from : ${request.requestURI}")
+
+        when (request.pathInfo) {
+            in Regex(idMatcher.pattern) -> deleteById(
+                response,
+                request.pathInfo.getPathVariables(idMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -64,18 +85,55 @@ class TriggersApiServlet : HttpServlet() {
         logger.info("Saving Trigger")
 
         val json = request.body()
-        val jsonObject = Gson().fromJson(json, TriggerJson::class.java)
-        logger.info(jsonObject.toString())
+        val triggerJson = Gson().fromJson(json, TriggerJson::class.java)
+        logger.info(triggerJson.toString())
 
-        val trigger = TriggerJson.toTrigger(jsonObject)
+        val validationResult = arrayListOf<String>()
 
-        if (trigger == null) {
-            return respondWithJson(response, null)
+        if (triggerJson.name.isEmpty()) {
+            validationResult.add("Name must not be empty")
+        } else if (Project.triggers.any { it.id != triggerJson.id && it.name == triggerJson.name }) {
+            validationResult.add("Condition set name already exists")
         }
 
-        Project.triggers.removeIf { it.name == trigger.name }
+        if (triggerJson.conditions.isEmpty()) {
+            validationResult.add("The condition set must contain at least one condition")
+        }
+
+        if (validationResult.isNotEmpty()) {
+            logger.info("Validation result: $validationResult")
+            return respondWithJson(response, validationResult)
+        }
+
+        val trigger = try {
+            TriggerJson.toTrigger(triggerJson)
+        } catch (e: Exception) {
+            logger.severe("Could not create trigger from json: $triggerJson")
+            e.printStackTrace()
+            respondWithJson(response, "Something went wrong: ${e.localizedMessage}")
+            null
+        } ?: return
+
+        Trigger.saveOrUpdate(trigger)
+
+        Project.triggers.removeIf { it.id == trigger.id }
         Project.triggers.add(trigger)
 
         respondWithJson(response, trigger.run(TriggerJson::from))
+    }
+
+    private fun deleteById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Deleting Trigger with id: $id")
+
+        val trigger = Project.triggers.find { it.id == id }
+
+        if (trigger == null) {
+            logger.info("Could not find Trigger with id: $id")
+            return respondWithJson(response, null)
+        }
+
+        Project.triggers.remove(trigger)
+        respondWithJson(response, Trigger.delete(id))
     }
 }

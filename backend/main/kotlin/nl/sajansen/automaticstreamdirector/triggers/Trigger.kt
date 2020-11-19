@@ -37,7 +37,6 @@ data class Trigger(
             obj.conditionEntities = obj.conditions.map(ConditionEntity::fromCondition)
             obj.conditionEntities.forEach { it.trigger = obj }
 
-            obj.actionSets.forEach { it.assignTrigger(obj) }
             obj.actionSetEntities = obj.actionSets
 
             return super.saveOrUpdate(obj)

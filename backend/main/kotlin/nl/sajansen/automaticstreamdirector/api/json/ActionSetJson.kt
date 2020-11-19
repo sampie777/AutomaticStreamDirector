@@ -19,7 +19,7 @@ data class ActionSetJson(
             )
         }
 
-        fun toActionSet(it: ActionSetJson): ActionSet? {
+        fun toActionSet(it: ActionSetJson): ActionSet {
             return ActionSet(
                 id = it.id,
                 name = it.name,

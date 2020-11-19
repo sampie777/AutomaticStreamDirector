@@ -2,7 +2,6 @@ package nl.sajansen.automaticstreamdirector.actions
 
 import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
 import nl.sajansen.automaticstreamdirector.db.managers.CommonDbManager
-import nl.sajansen.automaticstreamdirector.triggers.Trigger
 import javax.persistence.*
 
 @Entity
@@ -17,13 +16,6 @@ data class ActionSet(
 
     @OneToMany(mappedBy = "actionSet", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     private var actionEntities: List<ActionEntity> = emptyList()
-
-//    @OneToMany(mappedBy = "actionSets")
-//    private var triggers: List<Trigger> = emptyList()
-
-    fun assignTrigger(trigger: Trigger) {
-//        triggers = ArrayList(triggers).also { it.add(trigger) }
-    }
 
     companion object : CommonDbManager<ActionSet>(ActionSet::class.java) {
         override fun saveOrUpdate(obj: ActionSet): Boolean {
