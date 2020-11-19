@@ -17,9 +17,9 @@ export default class ActionItemComp extends Component<ComponentProps, ComponentS
     }
 
     render() {
-        return <ComponentListItemComp
-            onDeleteClick={() => this.props.onClick(this.props.action)}>
-            <div className={"ActionItemComp-name"}>{this.props.action.name}</div>
+        return <ComponentListItemComp className={"ActionItemComp"}
+                                      onDeleteClick={() => this.props.onClick(this.props.action)}>
+            <div className={"name"}>{this.props.action.name}</div>
         </ComponentListItemComp>;
     }
 }

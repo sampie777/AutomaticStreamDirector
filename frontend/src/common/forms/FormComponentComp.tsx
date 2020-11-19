@@ -4,6 +4,7 @@ import {FormComponent} from "./objects";
 interface ComponentProps {
     component: FormComponent,
     inputRef: React.RefObject<any> | null,
+    className: string,
 }
 
 interface ComponentState {
@@ -12,6 +13,7 @@ interface ComponentState {
 export default class FormComponentComp extends Component<ComponentProps, ComponentState> {
     public static defaultProps = {
         inputRef: null,
+        className: "",
     }
 
     constructor(props: ComponentProps) {
@@ -87,7 +89,7 @@ export default class FormComponentComp extends Component<ComponentProps, Compone
     }
 
     render() {
-        return <div className={"FormComponentComp formGroup"}>
+        return <div className={"FormComponentComp formGroup " + this.props.className}>
             <label>{this.props.component.labelText}</label>
             {this.getInput()}
         </div>;

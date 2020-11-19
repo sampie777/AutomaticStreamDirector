@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './App.css';
+import './App.sass';
 import {NotificationComponent} from "./components/notification/notifications";
 import TriggerListComp from "./components/triggers/TriggerListComp";
 import ActionSetListComp from "./components/actions/ActionSetListComp";
@@ -55,8 +55,11 @@ class App extends Component<ComponentProps, ComponentState> {
                 />}
 
             <DirectorStatusComp/>
-            <TriggerListComp/>
-            <ActionSetListComp ref={this.actionSetListComp}/>
+
+            <div className={"trigger-list-action-list-wrapper"}>
+                <TriggerListComp/>
+                <ActionSetListComp ref={this.actionSetListComp}/>
+            </div>
 
             <hr/>
 

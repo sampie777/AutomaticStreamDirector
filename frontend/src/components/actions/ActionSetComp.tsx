@@ -29,13 +29,16 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
     }
 
     render() {
-        return <ComponentListItemComp onEditClick={this.onEditClick}
+        return <ComponentListItemComp className={"ActionSetComp"}
+                                      onEditClick={this.onEditClick}
                                       onDeleteClick={this.onDeleteClick}
                                       onDoubleClick={this.onEditClick}>
             <h3>{this.actionSet.name}</h3>
-            <ol>
-                {this.actionSet.actions.map((it, i) => <li key={i + it.name}>{it.name}</li>)}
-            </ol>
+            <div className={"actions"}>
+                {this.actionSet.actions.map((it, i) =>
+                    <div title={it.name}
+                        key={i + it.name}>{it.name}</div>)}
+            </div>
         </ComponentListItemComp>;
     }
 

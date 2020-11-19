@@ -4,10 +4,10 @@ import StaticActionListComp from "./StaticActionListComp";
 import ActionItemComp from "./ActionItemComp";
 import FormComponentComp from "../../common/forms/FormComponentComp";
 import {FormComponent} from "../../common/forms/objects";
-import ActionFormComp from "./ActionFormComp";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Modal} from "semantic-ui-react";
+import './actions.sass'
 
 interface ComponentProps {
     actionSet: ActionSet | null,
@@ -50,13 +50,15 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
     render() {
         return <Modal centered={false}
                       open={true}
-                      onClose={this.props.onCancel}>
+                      onClose={this.props.onCancel}
+                      className={"ActionSetFormComp"}>
             <Modal.Header>
                 {this.state.actionSet.id == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}
             </Modal.Header>
             <Modal.Content scrolling>
                 <Modal.Description>
                     <FormComponentComp
+                        className={"name-input-form-group"}
                         inputRef={this.nameInputRef}
                         component={
                             new FormComponent(
@@ -66,20 +68,22 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                                 true,
                                 this.state.actionSet.name)}/>
 
-                    <div className={"component-list"}>
-                        <h3>Selected actions</h3>
-                        {this.state.selectedActions
-                            .map((action, i) => <ActionItemComp action={action}
-                                                                onClick={this.onActionItemClickRemove}
-                                                                key={i}/>)
-                        }
+
+                    <div className={"actions-lists"}>
+                        <div className={"component-list"}>
+                            <h3>Selected actions</h3>
+                            {this.state.selectedActions
+                                .map((action, i) => <ActionItemComp action={action}
+                                                                    onClick={this.onActionItemClickRemove}
+                                                                    key={i}/>)
+                            }
+                        </div>
+
+                        <StaticActionListComp onItemClick={this.onActionItemClickAdd}
+                                              showFormForStaticAction={this.state.newAction}
+                                              onActionSaved={this.onActionSaved}
+                                              onActionSaveCancelled={this.onActionSaveCancelled}/>
                     </div>
-
-                    <StaticActionListComp onItemClick={this.onActionItemClickAdd}/>
-
-                    {this.state.newAction == null ? "" :
-                        <ActionFormComp staticAction={this.state.newAction} onSuccess={this.onActionSaved}
-                                        onCancel={this.onActionSaveCancelled}/>}
                 </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
@@ -90,6 +94,9 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
     }
 
     private onActionItemClickAdd(action: StaticAction) {
+        if (action == this.state.newAction) {
+            return;
+        }
         console.log("Opening form for action: " + action.name)
 
         this.setState({

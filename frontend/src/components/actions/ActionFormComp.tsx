@@ -68,18 +68,13 @@ export default class ActionFormComp extends Component<ComponentProps, ComponentS
     }
 
     render() {
-        return <div>
-            <div className={"ActionItemComp-name"}>{this.staticAction.name}</div>
-            <div className={"ActionItemComp-previewText"}>{this.staticAction.previewText}</div>
-
-            <Form onSubmit={this.onSubmit}>
+        return <Form onSubmit={this.onSubmit}>
                 <input type={"hidden"} name={"className"} value={this.staticAction.className}/>
 
                 {this.staticAction.formComponents.map((it, i) => <FormComponentComp component={it} key={i}/>)}
 
                 <button type={'submit'}>Save</button>
                 <button onClick={this.props.onCancel}>Cancel</button>
-            </Form>
-        </div>;
+            </Form>;
     }
 }

@@ -6,6 +6,7 @@ interface ComponentProps {
     onDeleteClick: () => void | null,
     onClick: () => void,
     onDoubleClick: () => void,
+    className: string,
 }
 
 interface ComponentState {
@@ -17,6 +18,7 @@ export default class ComponentListItemComp extends Component<ComponentProps, Com
         onDeleteClick: null,
         onClick: () => null,
         onDoubleClick: () => null,
+        className: "",
     }
 
     constructor(props: ComponentProps) {
@@ -24,7 +26,7 @@ export default class ComponentListItemComp extends Component<ComponentProps, Com
     }
 
     render() {
-        return <div className={"ComponentListItemComp"}
+        return <div className={"ComponentListItemComp " + this.props.className}
                     onClick={this.props.onClick}
                     onDoubleClick={this.props.onDoubleClick}>
             <div className={"content"}>

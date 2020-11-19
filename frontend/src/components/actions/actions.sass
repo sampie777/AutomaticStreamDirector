@@ -1,5 +1,46 @@
-.StaticActionItemComp-name
-  font-weight: bold
+.ActionSetComp
+  .actions
+    & > div
+      border: 1px solid #ddd
+      border-radius: 5px
+      padding: 10px 25px
+      margin: 7px 0
+      background-color: #f1f1f1
+      color: #444
+      font-size: 80%
+      font-weight: 100
 
-.StaticActionItemComp-previewText
-  font-style: italic
+.StaticActionItemComp
+  .name
+    font-weight: 100
+
+  .previewText
+    font-style: italic
+    font-size: 77%
+
+  form
+    margin-top: 14px
+
+.ActionItemComp
+  .name
+    font-weight: 100
+
+.ActionSetFormComp
+  .name-input-form-group
+    display: flex
+
+    *
+      align-self: center
+
+    input
+      width: 100%
+
+  .actions-lists
+    display: flex
+    margin-top: 28px
+
+    & > div
+      width: 100%
+
+      &:not(:first-child)
+        margin-left: 20px
