@@ -6,19 +6,26 @@ import ComponentListItemComp from "../../common/componentList/ComponentListItemC
 interface ComponentProps {
     condition: Condition,
     onClick: (condition: Condition) => void,
+    onDeleteClick: (condition: Condition) => void,
 }
 
 interface ComponentState {
 }
 
 export default class ConditionItemComp extends Component<ComponentProps, ComponentState> {
+    public static defaultProps = {
+        onClick: () => null,
+        onDeleteClick: () => null,
+    }
+
     constructor(props: ComponentProps) {
         super(props);
     }
 
     render() {
         return <ComponentListItemComp className={"ConditionItemComp"}
-                                      onDeleteClick={() => this.props.onClick(this.props.condition)}>
+                                      onClick={() => this.props.onClick(this.props.condition)}
+                                      onDeleteClick={() => this.props.onDeleteClick(this.props.condition)}>
             <div className={"name"}>{this.props.condition.name}</div>
         </ComponentListItemComp>;
     }

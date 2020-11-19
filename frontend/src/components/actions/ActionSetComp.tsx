@@ -8,6 +8,8 @@ import ComponentListItemComp from "../../common/componentList/ComponentListItemC
 interface ComponentProps {
     actionSet: ActionSet,
     onDelete: () => void,
+    onClick: () => void,
+    onDeleteClick: () => void,
 }
 
 interface ComponentState {
@@ -16,6 +18,8 @@ interface ComponentState {
 export default class ActionSetComp extends Component<ComponentProps, ComponentState> {
     public static defaultProps = {
         onDelete: () => null,
+        onClick: () => null,
+        onDeleteClick: null,
     }
 
     private readonly actionSet: ActionSet;
@@ -32,6 +36,7 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
         return <ComponentListItemComp className={"ActionSetComp"}
                                       onEditClick={this.onEditClick}
                                       onDeleteClick={this.onDeleteClick}
+                                      onClick={this.props.onClick}
                                       onDoubleClick={this.onEditClick}>
             <h3>{this.actionSet.name}</h3>
             <div className={"actions"}>
@@ -47,6 +52,11 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
     }
 
     private onDeleteClick() {
+        if (this.props.onDeleteClick != null) {
+            console.debug("Overriding onDeleteClick");
+            return this.props.onDeleteClick();
+        }
+
         const choice = window.confirm(`Are you sure you want to delete ${this.actionSet.name}?`)
 
         if (!choice) {

@@ -51,6 +51,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         return <Modal centered={false}
                       open={true}
                       onClose={this.props.onCancel}
+                      size={"large"}
                       className={"ActionSetFormComp"}>
             <Modal.Header>
                 {this.state.actionSet.id == null ? "New action set" : `Edit '${this.state.actionSet.name}'`}
@@ -74,7 +75,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                             <h3>Selected actions</h3>
                             {this.state.selectedActions
                                 .map((action, i) => <ActionItemComp action={action}
-                                                                    onClick={this.onActionItemClickRemove}
+                                                                    onDeleteClick={this.onActionItemClickRemove}
                                                                     key={i}/>)
                             }
                         </div>
@@ -97,7 +98,6 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         if (action == this.state.newAction) {
             return;
         }
-        console.log("Opening form for action: " + action.name)
 
         this.setState({
                 newAction: null,

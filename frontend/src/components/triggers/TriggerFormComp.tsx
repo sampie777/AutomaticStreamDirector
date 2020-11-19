@@ -8,6 +8,9 @@ import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Modal} from "semantic-ui-react";
 import './trigger.sass'
+import {ActionSet} from "../actions/objects";
+import ActionSetComp from "../actions/ActionSetComp";
+import ActionSetListComp from "../actions/ActionSetListComp";
 
 interface ComponentProps {
     trigger: Trigger | null,
@@ -17,6 +20,7 @@ interface ComponentProps {
 
 interface ComponentState {
     selectedConditions: Array<Condition>,
+    selectedActionSets: Array<ActionSet>,
     newCondition: StaticCondition | null,
     trigger: Trigger,
 }
@@ -35,6 +39,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
 
         this.state = {
             selectedConditions: props.trigger?.conditions || [],
+            selectedActionSets: props.trigger?.actionSets || [],
             newCondition: null,
             trigger: props.trigger != null ? props.trigger : new Trigger(null, "", 0, [], []),
         }
@@ -46,6 +51,8 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         this.onConditionItemClickRemove = this.onConditionItemClickRemove.bind(this);
         this.onConditionSaved = this.onConditionSaved.bind(this);
         this.onConditionSaveCancelled = this.onConditionSaveCancelled.bind(this);
+        this.onActionSetClickRemove = this.onActionSetClickRemove.bind(this);
+        this.onActionSetClickAdd = this.onActionSetClickAdd.bind(this);
         this.onSave = this.onSave.bind(this);
     }
 
@@ -53,6 +60,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         return <Modal centered={false}
                       open={true}
                       onClose={this.props.onCancel}
+                      size={"large"}
                       className={"TriggerFormComp"}>
             <Modal.Header>
                 {this.state.trigger.id == null ? "New trigger" : `Edit '${this.state.trigger.name}'`}
@@ -78,13 +86,12 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                             true,
                             this.state.trigger.importance)}/>
 
-
                     <div className={"conditions-lists"}>
                         <div className={"component-list"}>
                             <h3>Selected conditions</h3>
                             {this.state.selectedConditions
                                 .map((condition, i) => <ConditionItemComp condition={condition}
-                                                                          onClick={this.onConditionItemClickRemove}
+                                                                          onDeleteClick={this.onConditionItemClickRemove}
                                                                           key={i}/>)
                             }
                         </div>
@@ -93,6 +100,19 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                                                  showFormForStaticCondition={this.state.newCondition}
                                                  onConditionSaved={this.onConditionSaved}
                                                  onConditionSaveCancelled={this.onConditionSaveCancelled}/>
+                    </div>
+
+                    <div className={"actionsets-lists"}>
+                        <div className={"component-list"}>
+                            <h3>Selected action sets</h3>
+                            {this.state.selectedActionSets
+                                .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
+                                                                      onDeleteClick={() => this.onActionSetClickRemove(actionSet)}
+                                                                      key={i}/>)
+                            }
+                        </div>
+
+                        <ActionSetListComp onItemClick={this.onActionSetClickAdd}/>
                     </div>
                 </Modal.Description>
             </Modal.Content>
@@ -107,7 +127,6 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         if (condition == this.state.newCondition) {
             return;
         }
-        console.log("Opening form for condition: " + condition.name)
 
         this.setState({
                 newCondition: null,
@@ -148,7 +167,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         const name = inputElement.value.trim();
         const id = this.state.trigger.id;
         const importance = +this.importanceInputRef.current!.value.trim();
-        const data = new Trigger(id, name, importance, this.state.selectedConditions, [])
+        const data = new Trigger(id, name, importance, this.state.selectedConditions, this.state.selectedActionSets);
 
         api.triggers.save(data)
             .then(response => response.json())
@@ -182,5 +201,17 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                 console.error('Error saving trigger', error);
                 addNotification(new Notification(`Error saving trigger`, error.message, Notification.ERROR));
             });
+    }
+
+    private onActionSetClickRemove(actionSet: ActionSet) {
+        this.setState({
+            selectedActionSets: this.state.selectedActionSets.filter(it => it !== actionSet)
+        })
+    }
+
+    private onActionSetClickAdd(actionSet: ActionSet) {
+        this.setState({
+            selectedActionSets: this.state.selectedActionSets.concat([actionSet])
+        })
     }
 }

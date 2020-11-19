@@ -6,6 +6,7 @@ import ActionSetComp from "./ActionSetComp";
 import NewActionSetButtonComp from "./NewActionSetButtonComp";
 
 interface ComponentProps {
+    onItemClick: (actionSet: ActionSet) => void,
 }
 
 interface ComponentState {
@@ -13,6 +14,10 @@ interface ComponentState {
 }
 
 export default class ActionSetListComp extends Component<ComponentProps, ComponentState> {
+    public static defaultProps = {
+        onItemClick: () => null,
+    }
+
     constructor(props: ComponentProps) {
         super(props);
 
@@ -56,6 +61,7 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
             {this.state.actionSets.length > 0 ?
                 this.state.actionSets
                     .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
+                                                          onClick={() => this.props.onItemClick(actionSet)}
                                                           onDelete={this.loadList}
                                                           key={i + actionSet.name}/>)
                 : <i>Much empty</i>}
