@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import App from "../../App";
+import NewComponentButtonComp from "../../common/componentList/NewComponentButtonComp";
 
 interface ComponentProps {
 }
@@ -14,9 +15,7 @@ export default class NewActionSetButtonComp extends Component<ComponentProps, Co
     }
 
     render() {
-        return <button className={"NewActionSetButtonComp"} onClick={this.onClick}>
-            New
-        </button>;
+        return <NewComponentButtonComp onClick={this.onClick} />;
     }
 
     private onClick() {

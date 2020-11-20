@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Modal} from "semantic-ui-react";
+import {Button, Form, Modal} from "semantic-ui-react";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Config, ConfigItemsWrapper} from "./objects";
@@ -79,8 +79,10 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
                 </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
-                <button type={'submit'} form={"ConfigFormComp-form"}>Save</button>
-                <button onClick={this.props.onCancel}>Cancel</button>
+                <Button.Group attached='bottom'>
+                    <Button positive type={'submit'} form={"ConfigFormComp-form"}>Save</Button>
+                    <Button onClick={this.props.onCancel}>Cancel</Button>
+                </Button.Group>
             </Modal.Actions>
         </Modal>;
     }

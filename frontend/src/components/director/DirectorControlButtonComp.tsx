@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Config} from "../config/objects";
+import {Button} from "semantic-ui-react";
 
 interface ComponentProps {
 }
@@ -50,10 +51,12 @@ export default class DirectorControlButtonComp extends Component<ComponentProps,
     }
 
     render() {
-        return <button onClick={this.onClick}
-                       className={"DirectorControlButtonComp"}>
-            {this.state.isRunning ? "Stop" : "Start"}
-        </button>;
+        return <Button positive={!this.state.isRunning}
+                       negative={this.state.isRunning}
+                       circular
+                       onClick={this.onClick}
+                       content={this.state.isRunning ? "Stop" : "Start"}
+                       className={"DirectorControlButtonComp"}/>;
     }
 
     private onClick() {

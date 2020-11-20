@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Action, StaticAction} from "./objects";
 import './actions.sass';
 import FormComponentComp from "../../common/forms/FormComponentComp";
-import {Form} from "semantic-ui-react";
+import {Button, Form} from "semantic-ui-react";
 import {FormProps} from "semantic-ui-react/dist/commonjs/collections/Form/Form";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
@@ -69,12 +69,14 @@ export default class ActionFormComp extends Component<ComponentProps, ComponentS
 
     render() {
         return <Form onSubmit={this.onSubmit}>
-                <input type={"hidden"} name={"className"} value={this.staticAction.className}/>
+            <input type={"hidden"} name={"className"} value={this.staticAction.className}/>
 
-                {this.staticAction.formComponents.map((it, i) => <FormComponentComp component={it} key={i}/>)}
+            {this.staticAction.formComponents.map((it, i) => <FormComponentComp component={it} key={i}/>)}
 
-                <button type={'submit'}>Save</button>
-                <button onClick={this.props.onCancel}>Cancel</button>
-            </Form>;
+            <Button.Group attached='bottom'>
+                <Button positive type={'submit'}>Save</Button>
+                <Button onClick={this.props.onCancel}>Cancel</Button>
+            </Button.Group>
+        </Form>;
     }
 }

@@ -6,7 +6,7 @@ import FormComponentComp from "../../common/forms/FormComponentComp";
 import {FormComponent} from "../../common/forms/objects";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
-import {Modal} from "semantic-ui-react";
+import {Button, Modal} from "semantic-ui-react";
 import './actions.sass'
 
 interface ComponentProps {
@@ -88,8 +88,10 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
-                <button type={'submit'} onClick={this.onSave}>Save</button>
-                <button onClick={this.props.onCancel}>Cancel</button>
+                <Button.Group attached='bottom'>
+                    <Button positive type={'submit'} onClick={this.onSave}>Save</Button>
+                    <Button onClick={this.props.onCancel}>Cancel</Button>
+                </Button.Group>
             </Modal.Actions>
         </Modal>;
     }

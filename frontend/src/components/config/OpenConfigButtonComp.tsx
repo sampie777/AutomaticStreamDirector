@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import App from "../../App";
+import {Button} from "semantic-ui-react";
 
 interface ComponentProps {
 }
@@ -14,9 +15,11 @@ export default class OpenConfigButtonComp extends Component<ComponentProps, Comp
     }
 
     render() {
-        return <button className={"OpenConfigButtonComp"} onClick={this.onClick}>
-            Config
-        </button>;
+        return <Button circular
+                       icon='settings'
+                       className={"OpenConfigButtonComp"}
+                       onClick={this.onClick}
+                       content={"Settings"}/>
     }
 
     private onClick() {
