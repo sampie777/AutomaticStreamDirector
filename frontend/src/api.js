@@ -66,5 +66,6 @@ export const api = {
     config: {
         list: () => get(`${apiBaseUrl}/config/list`),
         get: (key) => get(`${apiBaseUrl}/config/key/${key}`),
+        saveList: (data) => post(`${apiBaseUrl}/config/save`, data),
     },
 };

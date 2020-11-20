@@ -8,6 +8,8 @@ import ActionSetFormComp from "./components/actions/ActionSetFormComp";
 import {ActionSet} from "./components/actions/objects";
 import {Trigger} from "./components/triggers/objects";
 import TriggerFormComp from "./components/triggers/TriggerFormComp";
+import ConfigFormComp from "./components/config/ConfigFormComp";
+import OpenConfigButtonComp from "./components/config/OpenConfigButtonComp";
 
 
 interface ComponentProps {
@@ -16,6 +18,7 @@ interface ComponentProps {
 interface ComponentState {
     editActionSet: ActionSet | null | undefined,    // actionSet: edit, null: new, undefined: hide form
     editTrigger: Trigger | null | undefined,    // trigger: edit, null: new, undefined: hide form
+    editConfig: boolean,
 }
 
 
@@ -29,6 +32,7 @@ class App extends Component<ComponentProps, ComponentState> {
         this.state = {
             editActionSet: undefined,
             editTrigger: undefined,
+            editConfig: false,
         }
 
         this.actionSetListComp = React.createRef();
@@ -39,6 +43,9 @@ class App extends Component<ComponentProps, ComponentState> {
 
         this._editTrigger = this._editTrigger.bind(this);
         App.editTrigger = this._editTrigger;
+
+        this._editConfig = this._editConfig.bind(this);
+        App.editConfig = this._editConfig;
     }
 
     render() {
@@ -57,6 +64,10 @@ class App extends Component<ComponentProps, ComponentState> {
                                      this.triggerListComp.current?.loadList();
                                  }}
                                  onCancel={() => this.setState({editTrigger: undefined})}/>}
+            {!this.state.editConfig ? "" :
+                <ConfigFormComp onCancel={() => this.setState({editConfig: false})}/>}
+
+            <OpenConfigButtonComp />
 
             <DirectorStatusComp/>
 
@@ -82,6 +93,15 @@ class App extends Component<ComponentProps, ComponentState> {
         console.log("On editTrigger click")
         this.setState({
             editTrigger: trigger
+        })
+    }
+
+    static editConfig = () => console.error("Function not defined yet");
+
+    private _editConfig() {
+        console.log("On editConfig click")
+        this.setState({
+            editConfig: true
         })
     }
 }

@@ -4,7 +4,7 @@ import nl.sajansen.automaticstreamdirector.common.FormComponent
 
 
 data class ConfigJson(
-    val gui: List<ConfigJsonItem>,
+    val frontend: List<ConfigJsonItem>,
     val backend: List<ConfigJsonItem>
 )
 

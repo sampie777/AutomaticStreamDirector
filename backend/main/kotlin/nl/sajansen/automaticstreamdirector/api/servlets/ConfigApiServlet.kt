@@ -48,7 +48,7 @@ class ConfigApiServlet : HttpServlet() {
         logger.info("Getting Config values list")
 
         val configJson = ConfigJson(
-            gui = listOf(
+            frontend = listOf(
                 createConfigJsonItem("directorStatusUpdateInterval", "Director status update interval (sec.)"),
             ),
             backend = listOf(
