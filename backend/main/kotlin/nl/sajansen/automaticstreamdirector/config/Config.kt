@@ -7,6 +7,10 @@ import java.util.logging.Logger
 object Config {
     private val logger = Logger.getLogger(Config.toString())
 
+    // GUI
+    var directorStatusUpdateInterval: Long = 20 // seconds
+
+    // Director
     var updateInterval: Double = 1.0  // seconds
 
     // API
@@ -43,9 +47,16 @@ object Config {
         return null
     }
 
-    fun set(key: String, value: Any?) {
+    fun set(key: String, value: String?) {
         try {
-            javaClass.getDeclaredField(key).set(this, value)
+            val field = javaClass.getDeclaredField(key)
+            field.isAccessible = true
+
+            if (value == null) {
+                field.set(null, null)
+            } else {
+                field.set(null, PropertyLoader.stringToTypedValue(value, field.name, field.type))
+            }
         } catch (e: Exception) {
             logger.severe("Could not set config key $key")
             e.printStackTrace()

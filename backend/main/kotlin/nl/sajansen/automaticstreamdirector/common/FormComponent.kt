@@ -6,7 +6,6 @@ data class FormComponent (
     val type: Type,
     val required: Boolean = false,
     val defaultValue: Any? = null,
-    val value: Any? = null,
 
     val selectValues: List<SelectOption> = emptyList()
 ) {
