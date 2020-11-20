@@ -10,6 +10,7 @@ import {Trigger} from "./components/triggers/objects";
 import TriggerFormComp from "./components/triggers/TriggerFormComp";
 import ConfigFormComp from "./components/config/ConfigFormComp";
 import OpenConfigButtonComp from "./components/config/OpenConfigButtonComp";
+import {Config} from "./components/config/objects";
 
 
 interface ComponentProps {
@@ -48,26 +49,35 @@ class App extends Component<ComponentProps, ComponentState> {
         App.editConfig = this._editConfig;
     }
 
+    componentDidMount() {
+        Config.load();
+    }
+
     render() {
         return <div className="App">
             <NotificationComponent/>
 
+            {/* Modals */}
             {this.state.editActionSet === undefined ? "" :
                 <ActionSetFormComp actionSet={this.state.editActionSet}
                                    onSuccess={(actionSet) => {
                                        this.actionSetListComp.current?.loadList();
                                    }}
                                    onCancel={() => this.setState({editActionSet: undefined})}/>}
+
             {this.state.editTrigger === undefined ? "" :
                 <TriggerFormComp trigger={this.state.editTrigger}
                                  onSuccess={(trigger) => {
                                      this.triggerListComp.current?.loadList();
                                  }}
                                  onCancel={() => this.setState({editTrigger: undefined})}/>}
+
             {!this.state.editConfig ? "" :
                 <ConfigFormComp onCancel={() => this.setState({editConfig: false})}/>}
 
-            <OpenConfigButtonComp />
+            {/* End Modals */}
+
+            <OpenConfigButtonComp/>
 
             <DirectorStatusComp/>
 

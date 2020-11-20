@@ -87,7 +87,7 @@ class ConfigApiServlet : HttpServlet() {
             Config.set(key, value)
         }
 
-        respondWithJson(response, "ok")
+        getList(response)
     }
 
     private fun validateConfigList(data: FormDataJson): List<String> {

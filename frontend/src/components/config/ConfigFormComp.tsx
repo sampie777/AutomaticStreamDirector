@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Form, Modal} from "semantic-ui-react";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
-import {ConfigItemsWrapper} from "./objects";
+import {Config, ConfigItemsWrapper} from "./objects";
 import FormComponentComp from "../../common/forms/FormComponentComp";
 import {FormProps} from "semantic-ui-react/dist/commonjs/collections/Form/Form";
 
@@ -41,23 +41,15 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
     }
 
     loadList() {
-        console.log("(Re)loading config list");
+        Config.load(data => {
+            if (data == null) {
+                return console.error("Could not load config");
+            }
 
-        api.config.list()
-            .then(response => response.json())
-            .then(data => {
-                const config = data.data;
-
-                console.log("Loaded config list:", config);
-
-                this.setState({
-                    config: config
-                });
-            })
-            .catch(error => {
-                console.error('Error updating Config list', error);
-                addNotification(new Notification("Error updating Config list", error.message, Notification.ERROR));
+            this.setState({
+                config: data
             });
+        });
     }
 
     render() {
@@ -112,12 +104,14 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
                     return
                 }
 
-                if (response !== "ok") {
+                if (response ! instanceof ConfigItemsWrapper) {
                     addNotification(new Notification(`Error saving config`, "Unexpected response: " + response, Notification.ERROR));
                     return
                 }
 
                 addNotification(new Notification(`Saved config`, "", Notification.SUCCESS));
+                Config.updateValuesWith(response);
+
                 this.props.onSuccess();
             })
             .catch(error => {

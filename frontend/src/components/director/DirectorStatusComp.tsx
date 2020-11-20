@@ -9,7 +9,6 @@ interface ComponentProps {
 interface ComponentState {
     isRunning: boolean,
     keepPolling: boolean,
-    updateInterval: number,
 }
 
 export default class DirectorStatusComp extends Component<ComponentProps, ComponentState> {
@@ -20,15 +19,12 @@ export default class DirectorStatusComp extends Component<ComponentProps, Compon
         this.state = {
             isRunning: false,
             keepPolling: true,
-            updateInterval: 20,
         };
 
         this.update = this.update.bind(this);
-        this.getConfigInterval = this.getConfigInterval.bind(this);
     }
 
     componentDidMount() {
-        this.getConfigInterval()
         this.update()
     }
 
@@ -50,24 +46,12 @@ export default class DirectorStatusComp extends Component<ComponentProps, Compon
             })
             .finally(() => {
                 if (this.state.keepPolling) {
-                    window.setTimeout(this.update, this.state.updateInterval);
+                    window.setTimeout(this.update, Config.directorStatusUpdateInterval * 1000);
                 }
             });
     }
 
     render() {
         return <div>State: {this.state.isRunning ? "Running" : "Not running"}</div>;
-    }
-
-    private getConfigInterval() {
-        Config.get("directorStatusUpdateInterval", (value => {
-            if (value == null) {
-                return console.error("Didn't get a valid value from config API");
-            }
-
-            this.setState({
-                updateInterval: value * 1000
-            })
-        }))
     }
 }
