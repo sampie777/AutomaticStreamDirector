@@ -1,28 +1,34 @@
 import React, {Component} from 'react';
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
+import {Config} from "../config/objects";
 
 interface ComponentProps {
 }
 
 interface ComponentState {
-    isRunning: boolean
+    isRunning: boolean,
+    keepPolling: boolean,
+    updateInterval: number,
 }
 
 export default class DirectorStatusComp extends Component<ComponentProps, ComponentState> {
-    private keepPolling: boolean = true;
 
     constructor(props: ComponentProps) {
         super(props);
 
         this.state = {
             isRunning: false,
+            keepPolling: true,
+            updateInterval: 20,
         };
 
         this.update = this.update.bind(this);
+        this.getConfigInterval = this.getConfigInterval.bind(this);
     }
 
     componentDidMount() {
+        this.getConfigInterval()
         this.update()
     }
 
@@ -43,13 +49,25 @@ export default class DirectorStatusComp extends Component<ComponentProps, Compon
                 });
             })
             .finally(() => {
-                if (this.keepPolling) {
-                    window.setTimeout(this.update, 20000, this.keepPolling);
+                if (this.state.keepPolling) {
+                    window.setTimeout(this.update, this.state.updateInterval);
                 }
             });
     }
 
     render() {
         return <div>State: {this.state.isRunning ? "Running" : "Not running"}</div>;
+    }
+
+    private getConfigInterval() {
+        Config.get("directorStatusUpdateInterval", (value => {
+            if (value == null) {
+                return console.error("Didn't get a valid value from config API");
+            }
+
+            this.setState({
+                updateInterval: value * 1000
+            })
+        }))
     }
 }

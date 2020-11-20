@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Form, Modal} from "semantic-ui-react";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
-import {Config} from "./objects";
+import {ConfigItemsWrapper} from "./objects";
 import FormComponentComp from "../../common/forms/FormComponentComp";
 import {FormProps} from "semantic-ui-react/dist/commonjs/collections/Form/Form";
 
@@ -12,7 +12,7 @@ interface ComponentProps {
 }
 
 interface ComponentState {
-    config: Config
+    config: ConfigItemsWrapper
 }
 
 export default class ConfigFormComp extends Component<ComponentProps, ComponentState> {
@@ -29,7 +29,7 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
         this.formRef = React.createRef();
 
         this.state = {
-            config: new Config([], [])
+            config: new ConfigItemsWrapper([], [])
         }
 
         this.loadList = this.loadList.bind(this);
