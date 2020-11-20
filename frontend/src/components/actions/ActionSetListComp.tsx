@@ -7,6 +7,7 @@ import NewActionSetButtonComp from "./NewActionSetButtonComp";
 
 interface ComponentProps {
     onItemClick: (actionSet: ActionSet) => void,
+    title: string,
 }
 
 interface ComponentState {
@@ -16,6 +17,7 @@ interface ComponentState {
 export default class ActionSetListComp extends Component<ComponentProps, ComponentState> {
     public static defaultProps = {
         onItemClick: () => null,
+        title: "ActionSets",
     }
 
     constructor(props: ComponentProps) {
@@ -54,7 +56,7 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
 
     render() {
         return <div className={"component-list"}>
-            <h3>ActionSets</h3>
+            <h3>{this.props.title}</h3>
 
             <NewActionSetButtonComp />
 

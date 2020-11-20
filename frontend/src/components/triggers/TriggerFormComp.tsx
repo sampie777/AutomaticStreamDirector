@@ -6,7 +6,7 @@ import FormComponentComp from "../../common/forms/FormComponentComp";
 import {FormComponent} from "../../common/forms/objects";
 import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
-import {Button, Modal} from "semantic-ui-react";
+import {Button, Menu, MenuItemProps, Modal, Segment} from "semantic-ui-react";
 import './trigger.sass'
 import {ActionSet} from "../actions/objects";
 import ActionSetComp from "../actions/ActionSetComp";
@@ -23,6 +23,7 @@ interface ComponentState {
     selectedActionSets: Array<ActionSet>,
     newCondition: StaticCondition | null,
     trigger: Trigger,
+    activeMenuItem: string | undefined,
 }
 
 export default class TriggerFormComp extends Component<ComponentProps, ComponentState> {
@@ -34,6 +35,11 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
     private readonly nameInputRef: React.RefObject<HTMLInputElement>;
     private readonly importanceInputRef: React.RefObject<HTMLInputElement>;
 
+    private readonly MenuItem = {
+        Conditions: "conditions",
+        ActionSets: "actionsets",
+    }
+
     constructor(props: ComponentProps) {
         super(props);
 
@@ -42,6 +48,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
             selectedActionSets: props.trigger?.actionSets || [],
             newCondition: null,
             trigger: props.trigger != null ? props.trigger : new Trigger(null, "", 0, [], []),
+            activeMenuItem: this.MenuItem.Conditions,
         }
 
         this.nameInputRef = React.createRef();
@@ -54,6 +61,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         this.onActionSetClickRemove = this.onActionSetClickRemove.bind(this);
         this.onActionSetClickAdd = this.onActionSetClickAdd.bind(this);
         this.onSave = this.onSave.bind(this);
+        this.onMenuItemClick = this.onMenuItemClick.bind(this);
     }
 
     render() {
@@ -86,34 +94,56 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                             true,
                             this.state.trigger.importance)}/>
 
-                    <div className={"conditions-lists"}>
-                        <div className={"component-list"}>
-                            <h3>Selected conditions</h3>
-                            {this.state.selectedConditions
-                                .map((condition, i) => <ConditionItemComp condition={condition}
-                                                                          onDeleteClick={this.onConditionItemClickRemove}
-                                                                          key={i}/>)
-                            }
+
+                    <Menu tabular
+                          attached={'top'}>
+                        <Menu.Item
+                            name={this.MenuItem.Conditions}
+                            active={this.state.activeMenuItem === this.MenuItem.Conditions}
+                            onClick={this.onMenuItemClick}
+                        />
+                        <Menu.Item
+                            name={this.MenuItem.ActionSets}
+                            active={this.state.activeMenuItem === this.MenuItem.ActionSets}
+                            onClick={this.onMenuItemClick}
+                        />
+                    </Menu>
+
+                    <Segment attached='bottom'>
+                        <div className={this.state.activeMenuItem === this.MenuItem.Conditions ? "" : "hidden"}>
+                            <div className={"conditions-lists"}>
+                                <div className={"component-list"}>
+                                    <h3>Selected conditions</h3>
+                                    {this.state.selectedConditions
+                                        .map((condition, i) => <ConditionItemComp condition={condition}
+                                                                                  onDeleteClick={this.onConditionItemClickRemove}
+                                                                                  key={i}/>)
+                                    }
+                                </div>
+
+                                <StaticConditionListComp onItemClick={this.onConditionItemClickAdd}
+                                                         showFormForStaticCondition={this.state.newCondition}
+                                                         onConditionSaved={this.onConditionSaved}
+                                                         onConditionSaveCancelled={this.onConditionSaveCancelled}/>
+                            </div>
                         </div>
 
-                        <StaticConditionListComp onItemClick={this.onConditionItemClickAdd}
-                                                 showFormForStaticCondition={this.state.newCondition}
-                                                 onConditionSaved={this.onConditionSaved}
-                                                 onConditionSaveCancelled={this.onConditionSaveCancelled}/>
-                    </div>
+                        <div className={this.state.activeMenuItem === this.MenuItem.ActionSets ? "" : "hidden"}>
+                            <div className={"actionsets-lists"}>
+                                <div className={"component-list"}>
+                                    <h3>Selected action sets</h3>
+                                    {this.state.selectedActionSets
+                                        .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
+                                                                              onDeleteClick={() => this.onActionSetClickRemove(actionSet)}
+                                                                              key={i}/>)
+                                    }
+                                </div>
 
-                    <div className={"actionsets-lists"}>
-                        <div className={"component-list"}>
-                            <h3>Selected action sets</h3>
-                            {this.state.selectedActionSets
-                                .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
-                                                                      onDeleteClick={() => this.onActionSetClickRemove(actionSet)}
-                                                                      key={i}/>)
-                            }
+                                <ActionSetListComp title={"Available action sets"}
+                                                   onItemClick={this.onActionSetClickAdd}/>
+                            </div>
                         </div>
-
-                        <ActionSetListComp onItemClick={this.onActionSetClickAdd}/>
-                    </div>
+                    </Segment>
                 </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
@@ -214,6 +244,12 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
     private onActionSetClickAdd(actionSet: ActionSet) {
         this.setState({
             selectedActionSets: this.state.selectedActionSets.concat([actionSet])
+        })
+    }
+
+    private onMenuItemClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: MenuItemProps) {
+        this.setState({
+            activeMenuItem: data.name,
         })
     }
 }
