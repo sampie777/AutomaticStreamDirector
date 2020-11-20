@@ -3,6 +3,7 @@ import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import {Condition, StaticCondition} from "./objects";
 import StaticConditionItemComp from "./StaticConditionItemComp";
+import {Input, InputOnChangeData} from "semantic-ui-react";
 
 interface ComponentProps {
     onItemClick: (condition: StaticCondition) => void,
@@ -13,6 +14,7 @@ interface ComponentProps {
 
 interface ComponentState {
     staticConditions: Array<StaticCondition>,
+    filteredConditions: Array<StaticCondition>,
 }
 
 export default class StaticConditionListComp extends Component<ComponentProps, ComponentState> {
@@ -28,9 +30,11 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
 
         this.state = {
             staticConditions: [],
+            filteredConditions: [],
         };
 
         this.loadList = this.loadList.bind(this);
+        this.onSearchChange = this.onSearchChange.bind(this);
     }
 
     componentDidMount() {
@@ -46,7 +50,8 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
                 console.log("Loaded static conditions list:", staticConditions);
 
                 this.setState({
-                    staticConditions: staticConditions
+                    staticConditions: staticConditions,
+                    filteredConditions: staticConditions,
                 });
             })
             .catch(error => {
@@ -58,8 +63,15 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
     render() {
         return <div className={"component-list"}>
             <h3>Available conditions</h3>
-            {this.state.staticConditions.length > 0 ?
-                this.state.staticConditions
+
+            <Input icon='search'
+                   fluid
+                   placeholder='Search...'
+                   className={"search"}
+                   onChange={this.onSearchChange}/>
+
+            {this.state.filteredConditions.length > 0 ?
+                this.state.filteredConditions
                     .map(staticConditions => <StaticConditionItemComp staticCondition={staticConditions}
                                                                 showForm={staticConditions == this.props.showFormForStaticCondition}
                                                                 onClick={this.props.onItemClick}
@@ -68,5 +80,18 @@ export default class StaticConditionListComp extends Component<ComponentProps, C
                                                                 key={staticConditions.className}/>)
                 : <i>Much empty</i>}
         </div>;
+    }
+
+    private onSearchChange(event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) {
+        if (data.value.length == 0) {
+            return this.setState({
+                filteredConditions: this.state.staticConditions
+            });
+        }
+
+        const matcher = new RegExp(data.value, 'gi');
+        this.setState({
+            filteredConditions: this.state.staticConditions.filter(it => it.name.match(matcher))
+        });
     }
 }

@@ -62,7 +62,7 @@ class App extends Component<ComponentProps, ComponentState> {
             {this.state.editActionSet === undefined ? "" :
                 <ActionSetFormComp actionSet={this.state.editActionSet}
                                    onSuccess={(actionSet) => {
-                                       this.actionSetListComp.current?.loadList();
+                                       // this.actionSetListComp.current?.loadList();
                                    }}
                                    onCancel={() => this.setState({editActionSet: undefined})}/>}
 
@@ -85,7 +85,7 @@ class App extends Component<ComponentProps, ComponentState> {
 
             <div className={"trigger-list-action-list-wrapper"}>
                 <TriggerListComp ref={this.triggerListComp}/>
-                <ActionSetListComp ref={this.actionSetListComp}/>
+                {/*<ActionSetListComp ref={this.actionSetListComp}/>*/}
             </div>
         </div>
     }
