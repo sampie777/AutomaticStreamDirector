@@ -9,6 +9,7 @@ import {FormProps} from "semantic-ui-react/dist/commonjs/collections/Form/Form";
 interface ComponentProps {
     onSuccess: () => void,
     onCancel: () => void,
+    isOpen: boolean,
 }
 
 interface ComponentState {
@@ -33,28 +34,33 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
         }
 
         this.loadList = this.loadList.bind(this);
+        this.onNewConfigData = this.onNewConfigData.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentDidMount() {
-        this.loadList()
+    componentDidUpdate(prevProps: ComponentProps) {
+        if (!prevProps.isOpen && this.props.isOpen) {
+            this.loadList();
+        }
     }
 
     loadList() {
-        Config.load(data => {
-            if (data == null) {
-                return console.error("Could not load config");
-            }
+        Config.load(this.onNewConfigData);
+    }
 
-            this.setState({
-                config: data
-            });
+    private onNewConfigData(data: ConfigItemsWrapper | null) {
+        if (data == null) {
+            return console.error("Could not load config");
+        }
+
+        this.setState({
+            config: data
         });
     }
 
     render() {
         return <Modal centered={false}
-                      open={true}
+                      open={this.props.isOpen}
                       onClose={this.props.onCancel}
                       size={"small"}
                       className={"ConfigFormComp"}>
@@ -69,12 +75,12 @@ export default class ConfigFormComp extends Component<ComponentProps, ComponentS
                         <h3>Frontend</h3>
                         {this.state.config.frontend.map((item, i) =>
                             item.formComponent == null ? "" :
-                                <FormComponentComp component={item.formComponent} key={i + item.key}/>)}
+                                <FormComponentComp component={item.formComponent} key={item.key + item.value}/>)}
 
                         <h3>Backend</h3>
                         {this.state.config.backend.map((item, i) =>
                             item.formComponent == null ? "" :
-                                <FormComponentComp component={item.formComponent} key={i + item.key}/>)}
+                                <FormComponentComp component={item.formComponent} key={item.key + item.value}/>)}
                     </Form>
                 </Modal.Description>
             </Modal.Content>

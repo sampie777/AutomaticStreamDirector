@@ -59,22 +59,22 @@ class App extends Component<ComponentProps, ComponentState> {
             <NotificationComponent/>
 
             {/* Modals */}
-            {this.state.editActionSet === undefined ? "" :
-                <ActionSetFormComp actionSet={this.state.editActionSet}
-                                   onSuccess={(actionSet) => {
-                                       // this.actionSetListComp.current?.loadList();
-                                   }}
-                                   onCancel={() => this.setState({editActionSet: undefined})}/>}
+            <ActionSetFormComp isOpen={this.state.editActionSet !== undefined}
+                               actionSet={this.state.editActionSet || null}
+                               onSuccess={(actionSet) => {
+                                   // this.actionSetListComp.current?.loadList();
+                               }}
+                               onCancel={() => this.setState({editActionSet: undefined})}/>
 
-            {this.state.editTrigger === undefined ? "" :
-                <TriggerFormComp trigger={this.state.editTrigger}
-                                 onSuccess={(trigger) => {
-                                     this.triggerListComp.current?.loadList();
-                                 }}
-                                 onCancel={() => this.setState({editTrigger: undefined})}/>}
+            <TriggerFormComp isOpen={this.state.editTrigger !== undefined}
+                             trigger={this.state.editTrigger || null}
+                             onSuccess={(trigger) => {
+                                 this.triggerListComp.current?.loadList();
+                             }}
+                             onCancel={() => this.setState({editTrigger: undefined})}/>
 
-            {!this.state.editConfig ? "" :
-                <ConfigFormComp onCancel={() => this.setState({editConfig: false})}/>}
+            <ConfigFormComp isOpen={this.state.editConfig}
+                            onCancel={() => this.setState({editConfig: false})}/>
 
             {/* End Modals */}
 

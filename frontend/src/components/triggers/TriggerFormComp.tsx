@@ -13,6 +13,7 @@ import ActionSetComp from "../actions/ActionSetComp";
 import ActionSetListComp from "../actions/ActionSetListComp";
 
 interface ComponentProps {
+    isOpen: boolean,
     trigger: Trigger | null,
     onSuccess: (trigger: Trigger) => void,
     onCancel: () => void,
@@ -44,16 +45,18 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         super(props);
 
         this.state = {
-            selectedConditions: props.trigger?.conditions || [],
-            selectedActionSets: props.trigger?.actionSets || [],
+            selectedConditions: [],
+            selectedActionSets: [],
+            trigger: new Trigger(null, "", 0, [], []),
             newCondition: null,
-            trigger: props.trigger != null ? props.trigger : new Trigger(null, "", 0, [], []),
             activeMenuItem: this.MenuItem.Conditions,
         }
+        this.updateStateWithTrigger(this.props.trigger);
 
         this.nameInputRef = React.createRef();
         this.importanceInputRef = React.createRef();
 
+        this.updateStateWithTrigger = this.updateStateWithTrigger.bind(this);
         this.onConditionItemClickAdd = this.onConditionItemClickAdd.bind(this);
         this.onConditionItemClickRemove = this.onConditionItemClickRemove.bind(this);
         this.onConditionSaved = this.onConditionSaved.bind(this);
@@ -64,9 +67,27 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
     }
 
+    componentDidUpdate(prevProps: ComponentProps) {
+        if (Trigger.equals(prevProps.trigger, this.props.trigger))
+            return;
+
+        this.updateStateWithTrigger(this.props.trigger);
+    }
+
+    private updateStateWithTrigger(trigger: Trigger | null) {
+        let newTrigger = trigger || new Trigger(null, "", 0, [], []);
+        this.setState({
+            selectedConditions: newTrigger.conditions,
+            selectedActionSets: newTrigger.actionSets,
+            trigger: newTrigger,
+            newCondition: null,
+            activeMenuItem: this.MenuItem.Conditions,
+        });
+    }
+
     render() {
         return <Modal centered={false}
-                      open={true}
+                      open={this.props.isOpen}
                       onClose={this.props.onCancel}
                       size={"large"}
                       className={"TriggerFormComp"}>
@@ -117,7 +138,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                                     {this.state.selectedConditions
                                         .map((condition, i) => <ConditionItemComp condition={condition}
                                                                                   onDeleteClick={this.onConditionItemClickRemove}
-                                                                                  key={i}/>)
+                                                                                  key={i + condition.name}/>)
                                     }
                                 </div>
 
@@ -135,7 +156,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                                     {this.state.selectedActionSets
                                         .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
                                                                               onDeleteClick={() => this.onActionSetClickRemove(actionSet)}
-                                                                              key={i}/>)
+                                                                              key={i + actionSet.name}/>)
                                     }
                                 </div>
 

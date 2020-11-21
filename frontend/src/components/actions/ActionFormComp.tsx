@@ -34,6 +34,20 @@ export default class ActionFormComp extends Component<ComponentProps, ComponentS
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    render() {
+        return <Form onSubmit={this.onSubmit}>
+            <input type={"hidden"} name={"className"} value={this.staticAction.className}/>
+
+            {this.staticAction.formComponents.map((it, i) =>
+                <FormComponentComp component={it} key={i + it.name}/>)}
+
+            <Button.Group attached='bottom'>
+                <Button positive type={'submit'}>Save</Button>
+                <Button onClick={this.props.onCancel}>Cancel</Button>
+            </Button.Group>
+        </Form>;
+    }
+
     private onSubmit(e: React.FormEvent<HTMLFormElement>, formProps: FormProps) {
         e.preventDefault();
 
@@ -65,18 +79,5 @@ export default class ActionFormComp extends Component<ComponentProps, ComponentS
                 console.error('Error saving Action', error);
                 addNotification(new Notification(`Error saving action '${this.staticAction.name}'`, error.message, Notification.ERROR));
             });
-    }
-
-    render() {
-        return <Form onSubmit={this.onSubmit}>
-            <input type={"hidden"} name={"className"} value={this.staticAction.className}/>
-
-            {this.staticAction.formComponents.map((it, i) => <FormComponentComp component={it} key={i}/>)}
-
-            <Button.Group attached='bottom'>
-                <Button positive type={'submit'}>Save</Button>
-                <Button onClick={this.props.onCancel}>Cancel</Button>
-            </Button.Group>
-        </Form>;
     }
 }

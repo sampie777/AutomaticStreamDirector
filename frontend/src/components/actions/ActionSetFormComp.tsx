@@ -10,6 +10,7 @@ import {Button, Modal} from "semantic-ui-react";
 import './actions.sass'
 
 interface ComponentProps {
+    isOpen: boolean,
     actionSet: ActionSet | null,
     onSuccess: (actionSet: ActionSet) => void,
     onCancel: () => void,
@@ -33,13 +34,15 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         super(props);
 
         this.state = {
-            selectedActions: props.actionSet?.actions || [],
+            selectedActions: [],
+            actionSet: new ActionSet(null, "", []),
             newAction: null,
-            actionSet: props.actionSet != null ? props.actionSet : new ActionSet(null, "", []),
         }
+        this.updateStateWithActionSet(this.props.actionSet);
 
         this.nameInputRef = React.createRef();
 
+        this.updateStateWithActionSet = this.updateStateWithActionSet.bind(this);
         this.onActionItemClickAdd = this.onActionItemClickAdd.bind(this);
         this.onActionItemClickRemove = this.onActionItemClickRemove.bind(this);
         this.onActionSaved = this.onActionSaved.bind(this);
@@ -47,9 +50,25 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         this.onSave = this.onSave.bind(this);
     }
 
+    componentDidUpdate(prevProps: ComponentProps) {
+        if (ActionSet.equals(prevProps.actionSet, this.props.actionSet))
+            return;
+
+        this.updateStateWithActionSet(this.props.actionSet);
+    }
+
+    private updateStateWithActionSet(actionSet: ActionSet | null) {
+        let newActionSet = actionSet || new ActionSet(null, "", []);
+        this.setState({
+            selectedActions: newActionSet.actions,
+            actionSet: newActionSet,
+            newAction: null,
+        });
+    }
+
     render() {
         return <Modal centered={false}
-                      open={true}
+                      open={this.props.isOpen}
                       onClose={this.props.onCancel}
                       size={"large"}
                       className={"ActionSetFormComp"}>
@@ -76,7 +95,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                             {this.state.selectedActions
                                 .map((action, i) => <ActionItemComp action={action}
                                                                     onDeleteClick={this.onActionItemClickRemove}
-                                                                    key={i}/>)
+                                                                    key={i + action.name}/>)
                             }
                         </div>
 

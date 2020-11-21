@@ -63,7 +63,7 @@ export class NotificationComponent extends Component {
         return <div id="notifications">
             {this.state.notifications.map((notification, i) =>
                 <NotificationMessage notification={notification}
-                                     key={i.toString() + notification.timestamp.toString()}
+                                     key={i + notification.timestamp.toString()}
                                      remove={this.removeRemovedNotifications}/>)}
         </div>;
     }
