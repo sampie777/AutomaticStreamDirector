@@ -4,12 +4,13 @@ import {api} from "../../api";
 import {addNotification, Notification} from "../notification/notifications";
 import App from "../../App";
 import ComponentListItemComp from "../../common/componentList/ComponentListItemComp";
+import {Accordion, Label} from "semantic-ui-react";
 
 interface ComponentProps {
     actionSet: ActionSet,
     onDelete: () => void,
     onClick: () => void,
-    onDeleteClick: () => void,
+    onDeleteClick: (() => void) | null,
 }
 
 interface ComponentState {
@@ -19,51 +20,62 @@ export default class ActionSetComp extends Component<ComponentProps, ComponentSt
     public static defaultProps = {
         onDelete: () => null,
         onClick: () => null,
-        onDeleteClick: null,
+        onDeleteClick: undefined,
     }
-
-    private readonly actionSet: ActionSet;
 
     constructor(props: ComponentProps) {
         super(props);
-        this.actionSet = props.actionSet;
 
         this.onEditClick = this.onEditClick.bind(this);
         this.onDeleteClick = this.onDeleteClick.bind(this);
     }
 
+    private childPanels = [
+        {
+            key: 'actions',
+            title: {
+                content: (<h4>
+                    Actions
+                    <Label circular content={this.props.actionSet.actions.length}/>
+                </h4>),
+            },
+            content: {
+                content: (<div className={"actions"}>
+                    {this.props.actionSet.actions.length == 0 ?
+                        <i>none</i> : this.props.actionSet.actions.map(it =>
+                            <div title={it.name}
+                                 key={it.id + it.name}>{it.name}</div>)}
+                </div>),
+            },
+        },
+    ]
+
     render() {
         return <ComponentListItemComp className={"ActionSetComp"}
                                       onEditClick={this.onEditClick}
-                                      onDeleteClick={this.onDeleteClick}
+                                      onDeleteClick={this.props.onDeleteClick !== undefined ? this.props.onDeleteClick : this.onDeleteClick}
                                       onClick={this.props.onClick}
                                       onDoubleClick={this.onEditClick}>
-            <h3>{this.actionSet.name}</h3>
-            <div className={"actions"}>
-                {this.actionSet.actions.map((it, i) =>
-                    <div title={it.name}
-                        key={i + it.name}>{it.name}</div>)}
-            </div>
+            <h3>{this.props.actionSet.name}</h3>
+
+            <Accordion exclusive={false}
+                       panels={this.childPanels}
+                       fluid/>
         </ComponentListItemComp>;
     }
 
     private onEditClick() {
-        App.editActionSet(this.actionSet);
+        App.editActionSet(this.props.actionSet);
     }
 
     private onDeleteClick() {
-        if (this.props.onDeleteClick != null) {
-            console.debug("Overriding onDeleteClick");
-            return this.props.onDeleteClick();
-        }
-
-        const choice = window.confirm(`Are you sure you want to delete ${this.actionSet.name}?`)
+        const choice = window.confirm(`Are you sure you want to delete ${this.props.actionSet.name}?`)
 
         if (!choice) {
             return;
         }
 
-        api.actionSets.delete(this.actionSet.id)
+        api.actionSets.delete(this.props.actionSet.id)
             .then(response => response.json())
             .then(data => {
                 const result = data.data;

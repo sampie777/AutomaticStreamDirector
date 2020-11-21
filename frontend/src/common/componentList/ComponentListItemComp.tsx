@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import './componentlist.sass';
 
 interface ComponentProps {
-    onEditClick: () => void | null,
-    onDeleteClick: () => void | null,
+    onEditClick: (() => void) | null,
+    onDeleteClick: (() => void) | null,
     onClick: () => void,
     onDoubleClick: () => void,
     className: string,
@@ -41,8 +41,8 @@ export default class ComponentListItemComp extends Component<ComponentProps, Com
                 {this.props.children}
             </div>
             <div className={"controls"}>
-                {this.props.onEditClick == null ? "" : <a onClick={this.props.onEditClick} ref={this.editAnchorRef} className={"edit"}>Edit</a>}
-                {this.props.onDeleteClick == null ? "" : <a onClick={this.props.onDeleteClick} ref={this.deleteAnchorRef} className={"delete"}>Delete</a>}
+                {this.props.onEditClick === null ? "" : <a onClick={this.props.onEditClick} ref={this.editAnchorRef} className={"edit"}>Edit</a>}
+                {this.props.onDeleteClick === null ? "" : <a onClick={this.props.onDeleteClick} ref={this.deleteAnchorRef} className={"delete"}>Delete</a>}
             </div>
         </div>;
     }
