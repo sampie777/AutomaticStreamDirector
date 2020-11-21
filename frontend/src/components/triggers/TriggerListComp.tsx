@@ -68,9 +68,9 @@ export default class TriggerListComp extends Component<ComponentProps, Component
             {this.state.filteredTriggers.length > 0 ?
                 this.state.filteredTriggers
                     .sort(((a, b) => b.importance - a.importance))
-                    .map((trigger, i) => <TriggerComp trigger={trigger}
+                    .map(trigger => <TriggerComp trigger={trigger}
                                                  onDelete={this.loadList}
-                                                 key={i + trigger.name}/>)
+                                                 key={trigger.id + trigger.name}/>)
                 : <i>Much empty</i>}
         </div>;
     }

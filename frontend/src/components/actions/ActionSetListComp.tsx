@@ -73,10 +73,10 @@ export default class ActionSetListComp extends Component<ComponentProps, Compone
 
             {this.state.filteredActionSets.length > 0 ?
                 this.state.filteredActionSets
-                    .map((actionSet, i) => <ActionSetComp actionSet={actionSet}
+                    .map(actionSet => <ActionSetComp actionSet={actionSet}
                                                           onClick={() => this.props.onItemClick(actionSet)}
                                                           onDelete={this.loadList}
-                                                          key={i + actionSet.name}/>)
+                                                          key={actionSet.id + actionSet.name}/>)
                 : <i>Much empty</i>}
         </div>;
     }

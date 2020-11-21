@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './notifications.css';
+import './notifications.sass';
 
 export class Notification {
     isRemoved = false;
