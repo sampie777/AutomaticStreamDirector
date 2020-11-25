@@ -40,6 +40,7 @@ export const api = {
     },
     conditions: {
         list: () => get(`${apiBaseUrl}/conditions/list`),
+        edit: (id) => get(`${apiBaseUrl}/conditions/edit/${id}`),
         save: (data) => post(`${apiBaseUrl}/conditions/save`, data),
     },
     actionSets: {

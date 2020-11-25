@@ -49,12 +49,15 @@ class DelayAction(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val milliseconds = data["milliseconds"]?.toLongOrNull()
             if (milliseconds == null || milliseconds <= 0) {
                 return listOf("Milli seconds must be greater than 0")
             }
 
-            DelayAction(milliseconds).also {
+            DelayAction(
+                id = id,
+                milliseconds = milliseconds).also {
                 saveOrUpdate(it)
                 return it
             }

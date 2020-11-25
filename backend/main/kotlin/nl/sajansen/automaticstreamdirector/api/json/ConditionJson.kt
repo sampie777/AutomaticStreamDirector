@@ -6,6 +6,7 @@ import nl.sajansen.automaticstreamdirector.triggers.Condition
 data class ConditionJson(
     val id: Long?,
     val name: String,
+    val data: Any = {},
 ) {
 
     companion object {
@@ -13,6 +14,7 @@ data class ConditionJson(
             return ConditionJson(
                 id = it.id,
                 name = it.displayName(),
+                data = it.getDataSet() ?: {},
             )
         }
 

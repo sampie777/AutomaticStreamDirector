@@ -1,6 +1,7 @@
 package nl.sajansen.automaticstreamdirector.db.entities
 
 import nl.sajansen.automaticstreamdirector.db.managers.CommonDbManager
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.modules.Modules
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.Trigger
@@ -26,7 +27,7 @@ data class ConditionEntity(
             return ConditionEntity(
                 id = condition.id,
                 className = condition::class.java.name,
-                dataString = condition.getDbDataSet(),
+                dataString = jsonBuilder(prettyPrint = false).toJson(condition.getDataSet()),
             )
         }
 

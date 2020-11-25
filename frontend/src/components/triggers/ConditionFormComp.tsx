@@ -9,6 +9,7 @@ import {addNotification, Notification} from "../notification/notifications";
 
 interface ComponentProps {
     staticCondition: StaticCondition,
+    condition: Condition | null,
     onSuccess: (condition: Condition) => void,
     onCancel: () => void,
 }
@@ -18,6 +19,7 @@ interface ComponentState {
 
 export default class ConditionFormComp extends Component<ComponentProps, ComponentState> {
     public static defaultProps = {
+        condition: null,
         onSuccess: (condition: Condition) => null,
         onCancel: () => null,
     };
@@ -37,9 +39,12 @@ export default class ConditionFormComp extends Component<ComponentProps, Compone
     render() {
         return <Form onSubmit={this.onSubmit}>
             <input type={"hidden"} name={"className"} value={this.staticCondition.className}/>
+            {this.props.condition === null || this.props.condition.id === null ? "" : <input type={'hidden'} name={'id'} value={this.props.condition!.id!}/>}
 
             {this.staticCondition.formComponents.map((it, i) =>
-                <FormComponentComp component={it} key={i + it.name}/>)}
+                <FormComponentComp component={it}
+                                   defaultValue={this.props.condition?.data == null ? undefined : (this.props.condition?.data as any)[it.name]}
+                                   key={i + it.name}/>)}
 
             <Button.Group attached='bottom'>
                 <Button positive type={'submit'}>Save</Button>

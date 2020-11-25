@@ -59,6 +59,7 @@ class HttpRequestAction(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val url = data["url"] ?: ""
             val sendBody = data["sendBody"] ?: "" == "on"
             val body = data["body"] ?: ""
@@ -81,7 +82,11 @@ class HttpRequestAction(
                 return errors
             }
 
-            HttpRequestAction(url, if (sendBody) body else null, httpMethod!!)
+            HttpRequestAction(
+                id = id,
+                url = url,
+                body = if (sendBody) body else null,
+                method = httpMethod!!)
                 .also {
                     saveOrUpdate(it)
                     return it

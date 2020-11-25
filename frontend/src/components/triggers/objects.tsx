@@ -4,10 +4,14 @@ import {FormComponent} from "../../common/forms/objects";
 export class Condition {
     id: number | null;
     name: string;
+    data: Object;
 
-    constructor(id: number | null, name: string) {
+    constructor(id: number | null,
+                name: string,
+                data: Object = {}) {
         this.id = id;
         this.name = name;
+        this.data = data;
     }
 
     static equals(a: Condition | null, b: Condition | null) {
@@ -22,6 +26,13 @@ export class Condition {
 
         if (a.name !== b.name)
             return false;
+
+        if (a.data != b.data)   // Checks for pointer and null/undefined
+            return false;
+
+        if (JSON.stringify(a.data) !== JSON.stringify(b.data))
+            return false;
+
         return true;
     }
 }

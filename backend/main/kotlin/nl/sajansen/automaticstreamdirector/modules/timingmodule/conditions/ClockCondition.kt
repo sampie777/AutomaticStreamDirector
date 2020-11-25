@@ -6,7 +6,6 @@ import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 import nl.sajansen.automaticstreamdirector.format
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.time.LocalTime
@@ -34,9 +33,7 @@ class ClockCondition(
         }
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(time = time, matchSeconds = matchSeconds)
-    )
+    override fun getDataSet(): Any? = DbDataSet(time = time, matchSeconds = matchSeconds)
 
     data class DbDataSet(
         val time: LocalTime,
@@ -56,6 +53,7 @@ class ClockCondition(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val timeString = data["time"] ?: ""
             val matchSeconds = data["matchSeconds"] == "on"
 
@@ -79,6 +77,7 @@ class ClockCondition(
             }
 
             ClockCondition(
+                id = id,
                 time = time!!,
                 matchSeconds = matchSeconds,
             ).also {

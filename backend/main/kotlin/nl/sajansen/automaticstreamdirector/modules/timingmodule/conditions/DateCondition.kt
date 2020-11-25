@@ -6,7 +6,6 @@ import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 import nl.sajansen.automaticstreamdirector.format
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.text.SimpleDateFormat
@@ -37,12 +36,10 @@ class DateCondition(
         }
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(
+    override fun getDataSet(): Any? = DbDataSet(
             date = date,
             matchTime = matchTime,
         )
-    )
 
     data class DbDataSet(
         val date: Date,
@@ -63,6 +60,7 @@ class DateCondition(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val dateString = data["date"] ?: ""
             val matchTime = data["matchTime"] == "on"
             val timeString = data["time"] ?: ""
@@ -106,6 +104,7 @@ class DateCondition(
             }
 
             DateCondition(
+                id = id,
                 date = date!!,
                 matchTime = matchTime,
             ).also {

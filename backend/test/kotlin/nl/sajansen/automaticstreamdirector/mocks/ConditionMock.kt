@@ -17,7 +17,7 @@ class ConditionMock(
         return "ConditionMock"
     }
 
-    override fun getDbDataSet(): String? {
+    override fun getDataSet(): Any? {
         return ""
     }
 }

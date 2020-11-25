@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import org.eclipse.jetty.http.HttpMethod
@@ -32,14 +31,12 @@ class HttpRequestResponseCodeCondition(
         return "If $url ($method) gives response code $expectedCode"
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(
+    override fun getDataSet(): Any? = DbDataSet(
             url = url,
             expectedCode = expectedCode,
             body = body,
             method = method,
         )
-    )
 
     data class DbDataSet(
         val url: String,
@@ -69,6 +66,7 @@ class HttpRequestResponseCodeCondition(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val url = data["url"] ?: ""
             val expectedCode = data["expectedCode"]?.toIntOrNull()
             val body = data["body"]
@@ -99,6 +97,7 @@ class HttpRequestResponseCodeCondition(
             }
 
             HttpRequestResponseCodeCondition(
+                id = id,
                 url = url,
                 expectedCode = expectedCode!!,
                 body = body,

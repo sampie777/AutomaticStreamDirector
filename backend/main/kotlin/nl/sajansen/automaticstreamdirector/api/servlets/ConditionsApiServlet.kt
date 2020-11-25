@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 
 import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.api.body
+import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.ConditionJson
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.api.json.StaticConditionJson
@@ -19,12 +20,17 @@ class ConditionsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
+    private val editIdMatcher = """^/edit/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
             "/list" -> getStaticConditions(response)
+            in Regex(editIdMatcher.pattern) -> getStaticConditionForId(
+                response,
+                request.pathInfo.getPathVariables(editIdMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -44,6 +50,26 @@ class ConditionsApiServlet : HttpServlet() {
         val conditions = Modules.conditions()
 
         respondWithJson(response, conditions.map(StaticConditionJson::from))
+    }
+
+    private fun getStaticConditionForId(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLongOrNull()
+        logger.info("Get StaticCondition for condition with id: $id")
+
+        if (id == null || id < 0) {
+            logger.info("Invalid condition id")
+            return respondWithNotFound(response)
+        }
+
+        val condition = Condition.get(id) ?: return respondWithNotFound(response)
+
+        val staticCondition = Modules.conditions().find { it::class.java.enclosingClass == condition::class.java }
+        if (staticCondition == null) {
+            logger.info("StaticCondition not found for condition class: ${condition::class.java}")
+            return respondWithNotFound(response)
+        }
+
+        respondWithJson(response, staticCondition.run(StaticConditionJson::from))
     }
 
     private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {

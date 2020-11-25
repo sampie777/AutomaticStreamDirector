@@ -74,6 +74,7 @@ class ToggleAction(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val actionSetToBeToggledId = data["actionSetToBeToggled"]?.toLongOrNull()
             val startToggledOn = data["startToggledOn"] == "on"
 
@@ -84,6 +85,7 @@ class ToggleAction(
             }
 
             ToggleAction(
+                id = id,
                 actionSetToBeToggledId = actionSet.id,
                 startToggledOn = startToggledOn
             ).also {

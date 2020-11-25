@@ -7,7 +7,6 @@ import nl.sajansen.automaticstreamdirector.api.errorBody
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import org.eclipse.jetty.http.HttpMethod
@@ -45,14 +44,12 @@ class HttpRequestBodyCondition(
         return "If $url ($method) response matches $expectedBody"
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(
+    override fun getDataSet(): Any? = DbDataSet(
             url = url,
             expectedBody = expectedBody,
             body = body,
             method = method,
         )
-    )
 
     data class DbDataSet(
         val url: String,
@@ -82,6 +79,7 @@ class HttpRequestBodyCondition(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val url = data["url"] ?: ""
             val expectedBody = data["expectedBody"]
             val body = data["body"]
@@ -110,6 +108,7 @@ class HttpRequestBodyCondition(
             }
 
             HttpRequestBodyCondition(
+                id = id,
                 url = url,
                 expectedBody = expectedBody!!,
                 body = body,

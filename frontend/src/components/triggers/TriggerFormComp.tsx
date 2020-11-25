@@ -25,6 +25,7 @@ interface ComponentState {
     newCondition: StaticCondition | null,
     trigger: Trigger,
     activeMenuItem: string | undefined,
+    editCondition: Condition | null,
 }
 
 export default class TriggerFormComp extends Component<ComponentProps, ComponentState> {
@@ -50,6 +51,7 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
             trigger: new Trigger(null, "", 0, [], []),
             newCondition: null,
             activeMenuItem: this.MenuItem.Conditions,
+            editCondition: null,
         }
         this.updateStateWithTrigger(this.props.trigger);
 
@@ -65,6 +67,9 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         this.onActionSetClickAdd = this.onActionSetClickAdd.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
+        this.onConditionEditClick = this.onConditionEditClick.bind(this);
+        this.onEditConditionSaved = this.onEditConditionSaved.bind(this);
+        this.onEditConditionSaveCancelled = this.onEditConditionSaveCancelled.bind(this);
     }
 
     componentDidUpdate(prevProps: ComponentProps) {
@@ -138,6 +143,10 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
                                     {this.state.selectedConditions
                                         .map((condition, i) => <ConditionItemComp condition={condition}
                                                                                   onDeleteClick={this.onConditionItemClickRemove}
+                                                                                  onEditClick={() => this.onConditionEditClick(condition)}
+                                                                                  showForm={this.state.editCondition === condition}
+                                                                                  onSaved={this.onEditConditionSaved}
+                                                                                  onSaveCancelled={this.onEditConditionSaveCancelled}
                                                                                   key={i + condition.name}/>)
                                     }
                                 </div>
@@ -272,5 +281,24 @@ export default class TriggerFormComp extends Component<ComponentProps, Component
         this.setState({
             activeMenuItem: data.name,
         })
+    }
+
+    private onConditionEditClick(condition: Condition) {
+        this.setState({
+            editCondition: condition,
+        });
+    }
+
+    private onEditConditionSaved(condition: Condition) {
+        this.setState({
+            editCondition: null,
+            selectedConditions: this.state.selectedConditions.map(it => it.id === condition.id ? condition : it),
+        });
+    }
+
+    private onEditConditionSaveCancelled() {
+        this.setState({
+            editCondition: null,
+        });
     }
 }

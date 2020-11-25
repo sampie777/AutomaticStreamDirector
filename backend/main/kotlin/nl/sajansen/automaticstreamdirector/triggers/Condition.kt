@@ -4,8 +4,15 @@ import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 
 abstract class Condition {
     companion object {
-        fun saveOrUpdate(obj: Condition) {
+        fun saveOrUpdate(obj: Condition, updateTriggerId: Boolean = false) {
             val conditionEntity = ConditionEntity.fromCondition(obj)
+
+            if (!updateTriggerId && conditionEntity.id != null && conditionEntity.id!! > 0L) {
+                val existingConditionEntity = ConditionEntity.get(conditionEntity.id!!)
+                if (existingConditionEntity != null) {
+                    conditionEntity.trigger = existingConditionEntity.trigger
+                }
+            }
 
             ConditionEntity.saveOrUpdate(conditionEntity)
 
@@ -37,5 +44,5 @@ abstract class Condition {
 
     abstract fun check(): Boolean
     abstract fun displayName(): String
-    abstract fun getDbDataSet(): String?
+    abstract fun getDataSet(): Any?
 }

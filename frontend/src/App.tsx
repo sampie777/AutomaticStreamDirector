@@ -68,9 +68,7 @@ class App extends Component<ComponentProps, ComponentState> {
 
             <TriggerFormComp isOpen={this.state.editTrigger !== undefined}
                              trigger={this.state.editTrigger || null}
-                             onSuccess={(trigger) => {
-                                 this.triggerListComp.current?.loadList();
-                             }}
+                             onSuccess={this.triggerListComp.current?.loadList}
                              onCancel={() => this.setState({editTrigger: undefined})}/>
 
             <ConfigFormComp isOpen={this.state.editConfig}

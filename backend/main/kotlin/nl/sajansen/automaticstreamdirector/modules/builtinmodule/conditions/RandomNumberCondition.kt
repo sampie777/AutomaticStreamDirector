@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.logging.Logger
@@ -26,9 +25,7 @@ class RandomNumberCondition(
         return "If I'm lucky for ${(chance * 100).roundToInt()} %"
     }
 
-    override fun getDbDataSet(): String?  = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(chance = chance)
-    )
+    override fun getDataSet(): Any? = DbDataSet(chance = chance)
 
     data class DbDataSet(
         val chance: Double,
@@ -41,9 +38,10 @@ class RandomNumberCondition(
         override fun formComponents() = listOf(
             FormComponent("chance", "Chance (0% - 100%)", FormComponent.Type.Number, required = true),
         )
-        
+
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val chance = data["chance"]?.toDoubleOrNull()
 
             when {
@@ -54,7 +52,10 @@ class RandomNumberCondition(
                 }
             }
 
-            RandomNumberCondition(chance = chance / 100.0).also {
+            RandomNumberCondition(
+                id = id,
+                chance = chance / 100.0
+            ).also {
                 saveOrUpdate(it)
                 return it
             }

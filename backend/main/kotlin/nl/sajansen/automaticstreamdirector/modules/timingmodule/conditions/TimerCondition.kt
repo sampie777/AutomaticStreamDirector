@@ -6,7 +6,6 @@ import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 import nl.sajansen.automaticstreamdirector.getTimeAsClock
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.StaticCondition
 import java.util.*
@@ -35,9 +34,7 @@ class TimerCondition(
         return "If ${getTimeAsClock(seconds, looseFormat = true)} went by"
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(seconds = seconds)
-    )
+    override fun getDataSet(): Any? = DbDataSet(seconds = seconds)
 
     data class DbDataSet(
         val seconds: Long,
@@ -53,6 +50,7 @@ class TimerCondition(
 
         @JvmStatic
         override fun save(data: FormDataJson): Any {
+            val id = data["id"]?.toLongOrNull()
             val seconds = data["seconds"]?.toLongOrNull()
 
             val validationErrors = arrayListOf<String>()
@@ -66,6 +64,7 @@ class TimerCondition(
             }
 
             TimerCondition(
+                id = id,
                 seconds = seconds!!,
             ).also {
                 saveOrUpdate(it)
