@@ -61,9 +61,7 @@ class App extends Component<ComponentProps, ComponentState> {
             {/* Modals */}
             <ActionSetFormComp isOpen={this.state.editActionSet !== undefined}
                                actionSet={this.state.editActionSet || null}
-                               onSuccess={(actionSet) => {
-                                   // this.actionSetListComp.current?.loadList();
-                               }}
+                               onSuccess={() => null}
                                onCancel={() => this.setState({editActionSet: undefined})}/>
 
             <TriggerFormComp isOpen={this.state.editTrigger !== undefined}

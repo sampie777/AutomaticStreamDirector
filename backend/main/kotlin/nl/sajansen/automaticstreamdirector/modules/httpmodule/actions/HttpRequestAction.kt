@@ -7,7 +7,6 @@ import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import org.eclipse.jetty.http.HttpMethod
 import requestConnection
 import java.util.logging.Logger
@@ -36,9 +35,7 @@ class HttpRequestAction(
         }
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(url, body, method)
-    )
+    override fun getDataSet() = DbDataSet(url, body, method)
 
     data class DbDataSet(
         val url: String,

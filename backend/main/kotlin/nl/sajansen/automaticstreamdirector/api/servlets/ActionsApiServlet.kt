@@ -4,6 +4,7 @@ package nl.sajansen.automaticstreamdirector.api.servlets
 import com.google.gson.Gson
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.api.body
+import nl.sajansen.automaticstreamdirector.api.getPathVariables
 import nl.sajansen.automaticstreamdirector.api.json.ActionJson
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.api.json.StaticActionJson
@@ -19,12 +20,17 @@ class ActionsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
+    private val editIdMatcher = """^/edit/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
             "/list" -> getStaticActions(response)
+            in Regex(editIdMatcher.pattern) -> getStaticActionForId(
+                response,
+                request.pathInfo.getPathVariables(editIdMatcher)
+            )
             else -> respondWithNotFound(response)
         }
     }
@@ -44,6 +50,26 @@ class ActionsApiServlet : HttpServlet() {
         val actions = Modules.actions()
 
         respondWithJson(response, actions.map(StaticActionJson::from))
+    }
+
+    private fun getStaticActionForId(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLongOrNull()
+        logger.info("Get StaticAction for action with id: $id")
+
+        if (id == null || id < 0) {
+            logger.info("Invalid action id")
+            return respondWithNotFound(response)
+        }
+
+        val action = Action.get(id) ?: return respondWithNotFound(response)
+
+        val staticAction = Modules.actions().find { it::class.java.enclosingClass == action::class.java }
+        if (staticAction == null) {
+            logger.info("StaticAction not found for action class: ${action::class.java}")
+            return respondWithNotFound(response)
+        }
+
+        respondWithJson(response, staticAction.run(StaticActionJson::from))
     }
 
     private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {

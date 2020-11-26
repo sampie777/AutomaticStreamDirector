@@ -51,6 +51,7 @@ export const api = {
     },
     actions: {
         list: () => get(`${apiBaseUrl}/actions/list`),
+        edit: (id) => get(`${apiBaseUrl}/actions/edit/${id}`),
         save: (data) => post(`${apiBaseUrl}/actions/save`, data),
     },
     modules: {

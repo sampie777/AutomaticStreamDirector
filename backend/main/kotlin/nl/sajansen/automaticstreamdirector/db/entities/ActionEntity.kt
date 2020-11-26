@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.db.entities
 import nl.sajansen.automaticstreamdirector.actions.Action
 import nl.sajansen.automaticstreamdirector.actions.ActionSet
 import nl.sajansen.automaticstreamdirector.db.managers.CommonDbManager
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.modules.Modules
 import java.util.logging.Logger
 import javax.persistence.*
@@ -26,7 +27,7 @@ data class ActionEntity(
             return ActionEntity(
                 id = action.id,
                 className = action::class.java.name,
-                dataString = action.getDbDataSet(),
+                dataString = jsonBuilder(prettyPrint = false).toJson(action.getDataSet()),
             )
         }
 

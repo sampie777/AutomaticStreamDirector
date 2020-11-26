@@ -25,7 +25,7 @@ class RandomNumberCondition(
         return "If I'm lucky for ${(chance * 100).roundToInt()} %"
     }
 
-    override fun getDataSet(): Any? = DbDataSet(chance = chance)
+    override fun getDataSet() = DbDataSet(chance = chance)
 
     data class DbDataSet(
         val chance: Double,

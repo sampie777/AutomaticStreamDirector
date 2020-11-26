@@ -17,7 +17,7 @@ class ActionMock(override var id: Long? = null) : Action() {
         return "ActinoMock"
     }
 
-    override fun getDbDataSet(): String? {
+    override fun getDataSet(): Any? {
         return null
     }
 

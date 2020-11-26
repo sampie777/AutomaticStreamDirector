@@ -20,6 +20,7 @@ interface ComponentState {
     selectedActions: Array<Action>,
     newAction: StaticAction | null,
     actionSet: ActionSet,
+    editAction: Action | null,
 }
 
 export default class ActionSetFormComp extends Component<ComponentProps, ComponentState> {
@@ -37,6 +38,7 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
             selectedActions: [],
             actionSet: new ActionSet(null, "", []),
             newAction: null,
+            editAction: null,
         }
         this.updateStateWithActionSet(this.props.actionSet);
 
@@ -48,6 +50,9 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
         this.onActionSaved = this.onActionSaved.bind(this);
         this.onActionSaveCancelled = this.onActionSaveCancelled.bind(this);
         this.onSave = this.onSave.bind(this);
+        this.onActionEditClick = this.onActionEditClick.bind(this);
+        this.onEditActionSaved = this.onEditActionSaved.bind(this);
+        this.onEditActionSaveCancelled = this.onEditActionSaveCancelled.bind(this);
     }
 
     componentDidUpdate(prevProps: ComponentProps) {
@@ -95,6 +100,10 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                             {this.state.selectedActions
                                 .map((action, i) => <ActionItemComp action={action}
                                                                     onDeleteClick={this.onActionItemClickRemove}
+                                                                    onEditClick={() => this.onActionEditClick(action)}
+                                                                    showForm={this.state.editAction === action}
+                                                                    onSaved={this.onEditActionSaved}
+                                                                    onSaveCancelled={this.onEditActionSaveCancelled}
                                                                     key={i + action.name}/>)
                             }
                         </div>
@@ -192,5 +201,24 @@ export default class ActionSetFormComp extends Component<ComponentProps, Compone
                 console.error('Error saving action set', error);
                 addNotification(new Notification(`Error saving action set`, error.message, Notification.ERROR));
             });
+    }
+
+    private onActionEditClick(action: Action) {
+        this.setState({
+            editAction: action,
+        });
+    }
+
+    private onEditActionSaved(action: Action) {
+        this.setState({
+            editAction: null,
+            selectedActions: this.state.selectedActions.map(it => it.id === action.id ? action : it),
+        });
+    }
+
+    private onEditActionSaveCancelled() {
+        this.setState({
+            editAction: null,
+        });
     }
 }

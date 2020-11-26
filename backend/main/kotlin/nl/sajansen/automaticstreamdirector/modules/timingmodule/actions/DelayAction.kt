@@ -7,7 +7,6 @@ import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import java.util.logging.Logger
 import kotlin.math.round
 
@@ -26,9 +25,7 @@ class DelayAction(
         return "Wait $seconds seconds"
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(milliseconds)
-    )
+    override fun getDataSet() = DbDataSet(milliseconds)
 
     data class DbDataSet(
         val milliseconds: Long

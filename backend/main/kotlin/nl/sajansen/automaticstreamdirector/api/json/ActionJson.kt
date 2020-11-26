@@ -6,6 +6,7 @@ import nl.sajansen.automaticstreamdirector.actions.Action
 data class ActionJson(
     val id: Long?,
     val name: String,
+    val data: Any = {},
 ) {
 
     companion object {
@@ -13,6 +14,7 @@ data class ActionJson(
             return ActionJson(
                 id = it.id,
                 name = it.displayName(),
+                data = it.getDataSet() ?: {},
             )
         }
 

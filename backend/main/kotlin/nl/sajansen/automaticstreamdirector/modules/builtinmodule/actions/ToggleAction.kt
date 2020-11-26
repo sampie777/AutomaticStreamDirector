@@ -8,7 +8,6 @@ import nl.sajansen.automaticstreamdirector.actions.StaticAction
 import nl.sajansen.automaticstreamdirector.api.json.FormDataJson
 import nl.sajansen.automaticstreamdirector.common.FormComponent
 import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
-import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 
@@ -43,12 +42,10 @@ class ToggleAction(
         return "Toggle action set: ${getActionSetToBeToggled()?.name}"
     }
 
-    override fun getDbDataSet(): String? = jsonBuilder(prettyPrint = false).toJson(
-        DbDataSet(
+    override fun getDataSet() = DbDataSet(
             actionSetToBeToggledId = getActionSetToBeToggled()?.id,
             startToggledOn = startToggledOn,
         )
-    )
 
     data class DbDataSet(
         val actionSetToBeToggledId: Long?,

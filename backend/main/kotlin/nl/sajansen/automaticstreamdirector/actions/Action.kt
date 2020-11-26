@@ -4,8 +4,15 @@ import nl.sajansen.automaticstreamdirector.db.entities.ActionEntity
 
 abstract class Action {
     companion object {
-        fun saveOrUpdate(obj: Action) {
+        fun saveOrUpdate(obj: Action, updateActionSet: Boolean = false) {
             val actionEntity = ActionEntity.fromAction(obj)
+
+            if (!updateActionSet && actionEntity.id != null && actionEntity.id!! > 0L) {
+                val existingActionEntity = ActionEntity.get(actionEntity.id!!)
+                if (existingActionEntity != null) {
+                    actionEntity.actionSet = existingActionEntity.actionSet
+                }
+            }
 
             ActionEntity.saveOrUpdate(actionEntity)
 
@@ -37,5 +44,5 @@ abstract class Action {
 
     abstract fun execute()
     abstract fun displayName(): String
-    abstract fun getDbDataSet(): String?
+    abstract fun getDataSet(): Any?
 }
