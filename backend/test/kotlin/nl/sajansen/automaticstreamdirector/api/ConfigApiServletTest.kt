@@ -1,6 +1,10 @@
 package nl.sajansen.automaticstreamdirector.api
 
+import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
+import nl.sajansen.automaticstreamdirector.api.json.ConfigJson
 import nl.sajansen.automaticstreamdirector.config.Config
+import nl.sajansen.automaticstreamdirector.jsonBuilder
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -40,28 +44,34 @@ class ConfigApiServletTest {
 
     @Test
     fun testGetConfigKeyValue() {
-        val connection = get("$apiUrl/updateInterval")
+        val connection = get("$apiUrl/key/updateInterval")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
-        assertEquals("""{
+        assertEquals(
+            """{
   "data": {
     "key": "updateInterval",
-    "value": 1.0
+    "value": 1.0,
+    "formComponent": null
   }
-}""".trimIndent(), connection.body().trim())
+}""".trimIndent(), connection.body().trim()
+        )
     }
 
     @Test
     fun testGetInvalidConfigKeyValue() {
-        val connection = get("$apiUrl/xx")
+        val connection = get("$apiUrl/key/xx")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
-        assertEquals("""{
+        assertEquals(
+            """{
   "data": {
     "key": "xx",
-    "value": null
+    "value": null,
+    "formComponent": null
   }
-}""".trimIndent(), connection.body().trim())
+}""".trimIndent(), connection.body().trim()
+        )
     }
 
     @Test
@@ -69,20 +79,23 @@ class ConfigApiServletTest {
         val connection = get("$apiUrl/list")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
-        val body = connection.body().trim()
-        assertTrue(body.startsWith("""{
-  "data": ["""))
-        assertTrue(body.endsWith("""]
-}"""))
-        assertTrue(body.contains("""{
-      "key": "updateInterval",
-      "value": 1.0
-    }""".trimIndent()))
+        val body = connection.body()
+        println(body)
+        val obj = Gson().fromJson(body, Map::class.java)
+
+        assertEquals("data", obj.keys.first())
+        assertEquals("frontend", (obj["data"] as LinkedTreeMap<String, Any>).keys.toList()[0])
+        assertEquals("backend", (obj["data"] as LinkedTreeMap<String, Any>).keys.toList()[1])
+
+        val config = Gson().fromJson(jsonBuilder().toJson(obj.entries.first().value), ConfigJson::class.java)
+        assertTrue(config.backend.any {
+            it.key == "updateInterval" && it.value == 1.0
+        })
     }
 
     @Test
     fun testGetInvalidPostEndpoint() {
-        val connection = post("$apiUrl/x")
+        val connection = post("$apiUrl/savex")
 
         assertEquals(HttpStatus.NOT_FOUND_404, connection.responseCode)
         assertEquals("Not Found", connection.errorBody()?.trim())

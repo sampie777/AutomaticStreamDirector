@@ -10,7 +10,7 @@ data class ModuleJson(
     companion object {
         fun from(it: Module): ModuleJson {
             return ModuleJson(
-                name = it.toString(),
+                name = it.name,
             )
         }
     }
