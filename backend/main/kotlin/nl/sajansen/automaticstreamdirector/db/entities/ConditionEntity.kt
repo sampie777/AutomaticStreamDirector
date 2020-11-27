@@ -1,10 +1,12 @@
 package nl.sajansen.automaticstreamdirector.db.entities
 
+import nl.sajansen.automaticstreamdirector.db.DB
 import nl.sajansen.automaticstreamdirector.db.managers.CommonDbManager
 import nl.sajansen.automaticstreamdirector.jsonBuilder
 import nl.sajansen.automaticstreamdirector.modules.Modules
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import nl.sajansen.automaticstreamdirector.triggers.Trigger
+import org.hibernate.HibernateException
 import java.util.logging.Logger
 import javax.persistence.*
 
@@ -46,6 +48,31 @@ data class ConditionEntity(
                 logger.severe("Failed to convert ConditionEntity to Condition: $conditionEntity")
                 e.printStackTrace()
                 null
+            }
+        }
+
+        fun getByTrigger(trigger: Trigger?): List<ConditionEntity>? {
+            val session = DB.connection().openSession()
+
+            return try {
+                session.beginTransaction()
+
+                val list = session.criteriaBuilder.createQuery(ConditionEntity::class.java).let { criteria ->
+                    val root = criteria.from(ConditionEntity::class.java)
+                    criteria.select(root).where(
+                        session.criteriaBuilder.equal(root.get<Trigger>("trigger"), trigger),
+                    )
+                    session.createQuery(criteria).resultList
+                }
+
+                session.transaction.commit()
+                list
+            } catch (e: HibernateException) {
+                logger.severe("Exception occurred when getting list of ${ConditionEntity::class.java.name}")
+                e.printStackTrace()
+                null
+            } finally {
+                session.close()
             }
         }
     }

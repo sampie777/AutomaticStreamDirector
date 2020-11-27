@@ -20,7 +20,11 @@ data class Trigger(
     var id: Long? = null,
 ) {
 
-    @OneToMany(mappedBy = "trigger", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(
+        mappedBy = "trigger",
+        fetch = FetchType.EAGER,
+        orphanRemoval = true
+    )
     private var conditionEntities: List<ConditionEntity> = emptyList()
 
     @ManyToMany(cascade = [CascadeType.DETACH])
@@ -36,6 +40,16 @@ data class Trigger(
         override fun saveOrUpdate(obj: Trigger): Boolean {
             obj.conditionEntities = obj.conditions.map(ConditionEntity::fromCondition)
             obj.conditionEntities.forEach { it.trigger = obj }
+
+            // Delete conditions not part of the to be saved trigger
+            ConditionEntity.getByTrigger(obj)
+                ?.filter { old -> !obj.conditionEntities.any { new -> new.id == old.id } }
+                ?.filter { it.id != null }
+                ?.forEach {
+//                    it.trigger = null
+//                    ConditionEntity.saveOrUpdate(it)
+                    ConditionEntity.delete(it.id!!)
+                }
 
             obj.actionSetEntities = obj.actionSets
 

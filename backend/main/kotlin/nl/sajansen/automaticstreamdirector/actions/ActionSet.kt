@@ -14,7 +14,11 @@ data class ActionSet(
     var id: Long? = null,
 ) {
 
-    @OneToMany(mappedBy = "actionSet", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(
+        mappedBy = "actionSet",
+        fetch = FetchType.EAGER,
+        orphanRemoval = true
+    )
     private var actionEntities: List<ActionEntity> = emptyList()
 
     companion object : CommonDbManager<ActionSet>(ActionSet::class.java) {
@@ -23,6 +27,15 @@ data class ActionSet(
             obj.actionEntities.forEach {
                 it.actionSet = obj
             }
+
+            // Delete actions not part of the to be saved actionSet
+            ActionEntity.getByActionSet(obj)
+                ?.filter { old -> !obj.actionEntities.any { new -> new.id == old.id } }
+                ?.filter { it.id != null }
+                ?.forEach {
+                    ActionEntity.delete(it.id!!)
+                }
+
             return super.saveOrUpdate(obj)
         }
 
