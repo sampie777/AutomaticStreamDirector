@@ -3,6 +3,7 @@ package nl.sajansen.automaticstreamdirector.triggers
 import nl.sajansen.automaticstreamdirector.actions.ActionSet
 import nl.sajansen.automaticstreamdirector.db.entities.ConditionEntity
 import nl.sajansen.automaticstreamdirector.db.managers.CommonDbManager
+import nl.sajansen.automaticstreamdirector.project.Project
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import javax.persistence.*
@@ -35,6 +36,21 @@ data class Trigger(
     )
     @LazyCollection(LazyCollectionOption.FALSE)
     private var actionSetEntities: List<ActionSet> = emptyList()
+
+    /**
+     * Establish link between trigger.actionSets and Project.availableActionSets with the last as master
+     */
+    fun syncActionSetsWithProjectState() {
+        actionSets.toTypedArray().forEachIndexed { i, oldActionSet ->
+            val newActionSet = Project.availableActionSets.find { it.id == oldActionSet.id }
+            if (newActionSet == null) {
+                Project.availableActionSets.add(oldActionSet)
+                return@forEachIndexed
+            }
+
+            actionSets[i] = newActionSet
+        }
+    }
 
     companion object : CommonDbManager<Trigger>(Trigger::class.java) {
         override fun saveOrUpdate(obj: Trigger): Boolean {

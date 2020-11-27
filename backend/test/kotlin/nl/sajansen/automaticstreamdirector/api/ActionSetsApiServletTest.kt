@@ -53,15 +53,18 @@ class ActionSetsApiServletTest {
   "data": [
     {
       "name": "ActionSet1",
-      "actions": []
+      "actions": [],
+      "id": null
     },
     {
       "name": "ActionSet2",
-      "actions": []
+      "actions": [],
+      "id": null
     },
     {
       "name": "ActionSet3",
-      "actions": []
+      "actions": [],
+      "id": null
     }
   ]
 }""".trimIndent(), connection.body().trim()
@@ -81,18 +84,19 @@ class ActionSetsApiServletTest {
     }
 
     @Test
-    fun testGetByName() {
-        Project.availableActionSets.add(ActionSet("ActionSet1"))
-        Project.availableActionSets.add(ActionSet("ActionSet2"))
+    fun testGetById() {
+        Project.availableActionSets.add(ActionSet("ActionSet1", id = 1))
+        Project.availableActionSets.add(ActionSet("ActionSet2", id = 2))
 
-        val connection = get("$apiUrl/ActionSet1")
+        val connection = get("$apiUrl/1")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
         assertEquals(
             """{
   "data": {
     "name": "ActionSet1",
-    "actions": []
+    "actions": [],
+    "id": 1
   }
 }""".trimIndent(), connection.body().trim()
         )

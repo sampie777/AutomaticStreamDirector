@@ -18,17 +18,17 @@ class ActionSetsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
-    private val actionNameMatcher = """^/(\w+)$""".toRegex()
-    private val idMatcher = """^/delete/(\d+)$""".toRegex()
+    private val getIdMatcher = """^/(\d+)$""".toRegex()
+    private val deleteIdMatcher = """^/delete/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
             "/list" -> getList(response)
-            in Regex(actionNameMatcher.pattern) -> getByName(
+            in Regex(getIdMatcher.pattern) -> getById(
                 response,
-                request.pathInfo.getPathVariables(actionNameMatcher)
+                request.pathInfo.getPathVariables(getIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -39,9 +39,9 @@ class ActionSetsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
-            in Regex(idMatcher.pattern) -> deleteById(
+            in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
-                request.pathInfo.getPathVariables(idMatcher)
+                request.pathInfo.getPathVariables(deleteIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -51,9 +51,9 @@ class ActionSetsApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
-            in Regex(idMatcher.pattern) -> deleteById(
+            in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
-                request.pathInfo.getPathVariables(idMatcher)
+                request.pathInfo.getPathVariables(deleteIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -67,14 +67,14 @@ class ActionSetsApiServlet : HttpServlet() {
         respondWithJson(response, list.map(ActionSetJson::from))
     }
 
-    private fun getByName(response: HttpServletResponse, params: List<String>) {
-        val name = params[0]
-        logger.info("Getting ActionSet with name: $name")
+    private fun getById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Getting ActionSet with id: $id")
 
-        val actionSet = Project.availableActionSets.find { it.name == name }
+        val actionSet = Project.availableActionSets.find { it.id == id }
 
         if (actionSet == null) {
-            logger.info("Could not find ActionSet with name: $name")
+            logger.info("Could not find ActionSet with id: $id")
             return respondWithJson(response, null)
         }
 
@@ -116,8 +116,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
         ActionSet.saveOrUpdate(actionSet)
 
-        Project.availableActionSets.removeIf { it.id == actionSet.id }
-        Project.availableActionSets.add(actionSet)
+        updateProjectState(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))
     }
@@ -135,5 +134,25 @@ class ActionSetsApiServlet : HttpServlet() {
 
         Project.availableActionSets.remove(actionSet)
         respondWithJson(response, ActionSet.delete(id))
+    }
+
+    private fun updateProjectState(actionSet: ActionSet) {
+        val index = Project.availableActionSets.indexOfFirst { it.id == actionSet.id }
+        if (index < 0) {
+            Project.availableActionSets.add(actionSet)
+            return
+        }
+
+        // Update
+        val oldActionSet = Project.availableActionSets[index]
+        Project.availableActionSets[index] = actionSet
+
+        // Preserve existing action objects, as they are not changed by this Save method and need to keep their state
+        oldActionSet.actions.forEach { oldAction ->
+            val actionIndex = actionSet.actions.indexOfFirst { it.id == oldAction.id }
+            if (actionIndex >= 0) {
+                actionSet.actions[actionIndex] = oldAction
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ import nl.sajansen.automaticstreamdirector.api.json.StaticActionJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.modules.Modules
+import nl.sajansen.automaticstreamdirector.project.Project
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -20,6 +21,7 @@ class ActionsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
+    private val getIdMatcher = """^/(\d+)$""".toRegex()
     private val editIdMatcher = """^/edit/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
@@ -27,6 +29,10 @@ class ActionsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/list" -> getStaticActions(response)
+            in Regex(getIdMatcher.pattern) -> getById(
+                response,
+                request.pathInfo.getPathVariables(getIdMatcher)
+            )
             in Regex(editIdMatcher.pattern) -> getStaticActionForId(
                 response,
                 request.pathInfo.getPathVariables(editIdMatcher)
@@ -72,6 +78,22 @@ class ActionsApiServlet : HttpServlet() {
         respondWithJson(response, staticAction.run(StaticActionJson::from))
     }
 
+    private fun getById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Getting Action with id: $id")
+
+        val action = Project.availableActionSets
+            .flatMap { it.actions }
+            .find { it.id == id }
+
+        if (action == null) {
+            logger.info("Could not find Action with id: $id")
+            return respondWithJson(response, null)
+        }
+
+        respondWithJson(response, action.run(ActionJson::from))
+    }
+
     private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Saving Action")
 
@@ -111,6 +133,20 @@ class ActionsApiServlet : HttpServlet() {
             return respondWithJson(response, "Something went wrong")
         }
 
+        updateProjectState(result)
+
         respondWithJson(response, result.run(ActionJson::from))
+    }
+
+    fun updateProjectState(action: Action) {
+        if (action.id == null) {
+            return
+        }
+
+        val actionSet = Project.availableActionSets
+            .find { actionSet -> actionSet.actions.any { it.id == action.id } } ?: return
+
+        val index = actionSet.actions.indexOfFirst { it.id == action.id }
+        actionSet.actions[index] = action
     }
 }

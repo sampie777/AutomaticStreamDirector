@@ -39,7 +39,7 @@ abstract class Action {
     abstract var id: Long?
 
     override fun toString(): String {
-        return "${this::class.java.simpleName}(id=$id, displayName=${displayName()})"
+        return "${this::class.java.simpleName}(id=$id, displayName=${displayName()}, dataSet=${getDataSet()})"
     }
 
     abstract fun execute()

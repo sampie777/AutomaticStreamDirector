@@ -55,19 +55,22 @@ class TriggersApiServletTest {
       "name": "Trigger1",
       "importance": 0,
       "conditions": [],
-      "actionSets": []
+      "actionSets": [],
+      "id": null
     },
     {
       "name": "Trigger2",
       "importance": 0,
       "conditions": [],
-      "actionSets": []
+      "actionSets": [],
+      "id": null
     },
     {
       "name": "Trigger3",
       "importance": 0,
       "conditions": [],
-      "actionSets": []
+      "actionSets": [],
+      "id": null
     }
   ]
 }""".trimIndent(), connection.body().trim()
@@ -87,11 +90,11 @@ class TriggersApiServletTest {
     }
 
     @Test
-    fun testGetByName() {
-        Project.triggers.add(Trigger("Trigger1"))
-        Project.triggers.add(Trigger("Trigger2"))
+    fun testGetById() {
+        Project.triggers.add(Trigger("Trigger1", id = 1))
+        Project.triggers.add(Trigger("Trigger2", id = 2))
 
-        val connection = get("$apiUrl/Trigger1")
+        val connection = get("$apiUrl/1")
 
         assertEquals(HttpStatus.OK_200, connection.responseCode)
         assertEquals(
@@ -100,7 +103,8 @@ class TriggersApiServletTest {
     "name": "Trigger1",
     "importance": 0,
     "conditions": [],
-    "actionSets": []
+    "actionSets": [],
+    "id": 1
   }
 }""".trimIndent(), connection.body().trim()
         )

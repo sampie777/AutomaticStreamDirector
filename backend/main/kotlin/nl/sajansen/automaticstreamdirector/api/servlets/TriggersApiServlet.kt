@@ -18,17 +18,17 @@ class TriggersApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
-    private val triggerNameMatcher = """^/(\w+)$""".toRegex()
-    private val idMatcher = """^/delete/(\d+)$""".toRegex()
+    private val getIdMatcher = """^/(\d+)$""".toRegex()
+    private val deleteIdMatcher = """^/delete/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
             "/list" -> getList(response)
-            in Regex(triggerNameMatcher.pattern) -> getByName(
+            in Regex(getIdMatcher.pattern) -> getById(
                 response,
-                request.pathInfo.getPathVariables(triggerNameMatcher)
+                request.pathInfo.getPathVariables(getIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -39,9 +39,9 @@ class TriggersApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
-            in Regex(idMatcher.pattern) -> deleteById(
+            in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
-                request.pathInfo.getPathVariables(idMatcher)
+                request.pathInfo.getPathVariables(deleteIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -51,9 +51,9 @@ class TriggersApiServlet : HttpServlet() {
         logger.info("Processing ${request.method} request from : ${request.requestURI}")
 
         when (request.pathInfo) {
-            in Regex(idMatcher.pattern) -> deleteById(
+            in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
-                request.pathInfo.getPathVariables(idMatcher)
+                request.pathInfo.getPathVariables(deleteIdMatcher)
             )
             else -> respondWithNotFound(response)
         }
@@ -67,14 +67,14 @@ class TriggersApiServlet : HttpServlet() {
         respondWithJson(response, list.map(TriggerJson::from))
     }
 
-    private fun getByName(response: HttpServletResponse, params: List<String>) {
-        val name = params[0]
-        logger.info("Getting Trigger with name: $name")
+    private fun getById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Getting Trigger with id: $id")
 
-        val trigger = Project.triggers.find { it.name == name }
+        val trigger = Project.triggers.find { it.id == id }
 
         if (trigger == null) {
-            logger.info("Could not find Trigger with name: $name")
+            logger.info("Could not find Trigger with id: $id")
             return respondWithJson(response, null)
         }
 
@@ -116,8 +116,7 @@ class TriggersApiServlet : HttpServlet() {
 
         Trigger.saveOrUpdate(trigger)
 
-        Project.triggers.removeIf { it.id == trigger.id }
-        Project.triggers.add(trigger)
+        updateProjectState(trigger)
 
         respondWithJson(response, trigger.run(TriggerJson::from))
     }
@@ -135,5 +134,27 @@ class TriggersApiServlet : HttpServlet() {
 
         Project.triggers.remove(trigger)
         respondWithJson(response, Trigger.delete(id))
+    }
+
+    private fun updateProjectState(trigger: Trigger) {
+        trigger.syncActionSetsWithProjectState()
+
+        val index = Project.triggers.indexOfFirst { it.id == trigger.id }
+        if (index < 0) {
+            Project.triggers.add(trigger)
+            return
+        }
+
+        // Update
+        val oldTrigger = Project.triggers[index]
+        Project.triggers[index] = trigger
+
+        // Preserve existing condition objects, as they are not changed by this Save method and need to keep their state
+        oldTrigger.conditions.forEach { oldCondition ->
+            val conditionIndex = trigger.conditions.indexOfFirst { it.id == oldCondition.id }
+            if (conditionIndex >= 0) {
+                trigger.conditions[conditionIndex] = oldCondition
+            }
+        }
     }
 }

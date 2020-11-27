@@ -8,8 +8,8 @@ import java.util.logging.Logger
 object Project {
     private val logger = Logger.getLogger(Project::class.java.name)
 
-    val triggers: ArrayList<Trigger> = arrayListOf()
     val availableActionSets: ArrayList<ActionSet> = arrayListOf()
+    val triggers: ArrayList<Trigger> = arrayListOf()
 
     fun load() {
         loadActionSets()
@@ -21,6 +21,7 @@ object Project {
 
         val actionSets = ActionSet.list()?.filterNotNull()
 
+        this.availableActionSets.clear()
         if (actionSets == null) {
             logger.info("No actionSets found in database")
             return
@@ -30,17 +31,19 @@ object Project {
         logger.info("${actionSets.size} actionSets loaded from database")
     }
 
-    private fun loadTriggers() {
+    fun loadTriggers() {
         logger.info("Loading triggers")
 
         val triggers = Trigger.list()?.filterNotNull()
 
+        this.triggers.clear()
         if (triggers == null) {
             logger.info("No triggers found in database")
             return
         }
 
         this.triggers.addAll(triggers)
+        triggers.forEach(Trigger::syncActionSetsWithProjectState)
         logger.info("${triggers.size} triggers loaded from database")
     }
 }

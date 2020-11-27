@@ -8,11 +8,11 @@ import java.util.logging.Logger
 
 class ModuleMock(override val name: String = "ModuleMock") : Module {
     private val logger = Logger.getLogger(ModuleMock::class.java.name)
-    override fun actions(): List<StaticAction> {
-        TODO("Not yet implemented")
-    }
+    override fun actions(): List<StaticAction> = listOf(
+        ActionMock
+    )
 
-    override fun conditions(): List<StaticCondition> {
-        TODO("Not yet implemented")
-    }
+    override fun conditions(): List<StaticCondition> = listOf(
+        ConditionMock
+    )
 }

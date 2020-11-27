@@ -10,6 +10,7 @@ import nl.sajansen.automaticstreamdirector.api.json.StaticConditionJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.modules.Modules
+import nl.sajansen.automaticstreamdirector.project.Project
 import nl.sajansen.automaticstreamdirector.triggers.Condition
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
@@ -20,6 +21,7 @@ class ConditionsApiServlet : HttpServlet() {
     private val logger = Logger.getLogger(ConfigApiServlet::class.java.name)
 
     operator fun Regex.contains(text: CharSequence?): Boolean = this.matches(text ?: "")
+    private val getIdMatcher = """^/(\d+)$""".toRegex()
     private val editIdMatcher = """^/edit/(\d+)$""".toRegex()
 
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
@@ -27,6 +29,10 @@ class ConditionsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/list" -> getStaticConditions(response)
+            in Regex(getIdMatcher.pattern) -> getById(
+                response,
+                request.pathInfo.getPathVariables(getIdMatcher)
+            )
             in Regex(editIdMatcher.pattern) -> getStaticConditionForId(
                 response,
                 request.pathInfo.getPathVariables(editIdMatcher)
@@ -72,6 +78,22 @@ class ConditionsApiServlet : HttpServlet() {
         respondWithJson(response, staticCondition.run(StaticConditionJson::from))
     }
 
+    private fun getById(response: HttpServletResponse, params: List<String>) {
+        val id = params[0].toLong()
+        logger.info("Getting Condition with id: $id")
+
+        val condition = Project.triggers
+            .flatMap { it.conditions }
+            .find { it.id == id }
+
+        if (condition == null) {
+            logger.info("Could not find Condition with id: $id")
+            return respondWithJson(response, null)
+        }
+
+        respondWithJson(response, condition.run(ConditionJson::from))
+    }
+
     private fun postSave(request: HttpServletRequest, response: HttpServletResponse) {
         logger.info("Saving Condition")
 
@@ -111,6 +133,20 @@ class ConditionsApiServlet : HttpServlet() {
             return respondWithJson(response, "Something went wrong")
         }
 
+        updateProjectState(result)
+
         respondWithJson(response, result.run(ConditionJson::from))
+    }
+
+    fun updateProjectState(condition: Condition) {
+        if (condition.id == null) {
+            return
+        }
+
+        val trigger = Project.triggers
+            .find { trigger -> trigger.conditions.any { it.id == condition.id } } ?: return
+
+        val index = trigger.conditions.indexOfFirst { it.id == condition.id }
+        trigger.conditions[index] = condition
     }
 }
