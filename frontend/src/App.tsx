@@ -12,6 +12,8 @@ import ConfigFormComp from "./components/config/ConfigFormComp";
 import OpenConfigButtonComp from "./components/config/OpenConfigButtonComp";
 import {Config} from "./components/config/objects";
 import DirectorControlButtonComp from "./components/director/DirectorControlButtonComp";
+import ReloadAllActionSetsButtonComp from "./components/actions/ReloadAllActionSetsButtonComp";
+import ReloadAllTriggersButtonComp from "./components/triggers/ReloadAllTriggersButtonComp";
 
 
 interface ComponentProps {
@@ -78,6 +80,8 @@ class App extends Component<ComponentProps, ComponentState> {
 
             <DirectorStatusComp/>
             <DirectorControlButtonComp/>
+            <ReloadAllActionSetsButtonComp/>
+            <ReloadAllTriggersButtonComp/>
 
             <div className={"trigger-list-action-list-wrapper"}>
                 <TriggerListComp ref={this.triggerListComp}/>

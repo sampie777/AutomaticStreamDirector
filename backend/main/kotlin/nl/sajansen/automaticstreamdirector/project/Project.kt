@@ -16,7 +16,7 @@ object Project {
         loadTriggers()
     }
 
-    private fun loadActionSets() {
+    fun loadActionSets() {
         logger.info("Loading available action sets")
 
         val actionSets = ActionSet.list()?.filterNotNull()
@@ -43,7 +43,10 @@ object Project {
         }
 
         this.triggers.addAll(triggers)
+
+        logger.info("Syncing triggers with loaded action sets")
         triggers.forEach(Trigger::syncActionSetsWithProjectState)
+
         logger.info("${triggers.size} triggers loaded from database")
     }
 }

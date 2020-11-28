@@ -37,6 +37,7 @@ export const api = {
         get: (name) => get(`${apiBaseUrl}/triggers/${name}`),
         save: (data) => post(`${apiBaseUrl}/triggers/save`, data),
         delete: (id) => post(`${apiBaseUrl}/triggers/delete/${id}`),
+        reloadAll: () => post(`${apiBaseUrl}/triggers/reloadAll`),
     },
     conditions: {
         list: () => get(`${apiBaseUrl}/conditions/list`),
@@ -48,6 +49,7 @@ export const api = {
         get: (name) => get(`${apiBaseUrl}/actionsets/${name}`),
         save: (data) => post(`${apiBaseUrl}/actionsets/save`, data),
         delete: (id) => post(`${apiBaseUrl}/actionsets/delete/${id}`),
+        reloadAll: () => post(`${apiBaseUrl}/actionsets/reloadAll`),
     },
     actions: {
         list: () => get(`${apiBaseUrl}/actions/list`),

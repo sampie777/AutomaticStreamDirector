@@ -9,6 +9,7 @@ import nl.sajansen.automaticstreamdirector.api.json.ActionSetJson
 import nl.sajansen.automaticstreamdirector.api.respondWithJson
 import nl.sajansen.automaticstreamdirector.api.respondWithNotFound
 import nl.sajansen.automaticstreamdirector.project.Project
+import nl.sajansen.automaticstreamdirector.triggers.Trigger
 import java.util.logging.Logger
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -39,6 +40,7 @@ class ActionSetsApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
+            "/reloadAll" -> postReloadAll(request, response)
             in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
                 request.pathInfo.getPathVariables(deleteIdMatcher)
@@ -119,6 +121,17 @@ class ActionSetsApiServlet : HttpServlet() {
         updateProjectState(actionSet)
 
         respondWithJson(response, actionSet.run(ActionSetJson::from))
+    }
+
+    private fun postReloadAll(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Reloading all ActionSets")
+
+        Project.loadActionSets()
+
+        logger.info("Syncing triggers with loaded action sets")
+        Project.triggers.forEach(Trigger::syncActionSetsWithProjectState)
+
+        respondWithJson(response, "ok")
     }
 
     private fun deleteById(response: HttpServletResponse, params: List<String>) {

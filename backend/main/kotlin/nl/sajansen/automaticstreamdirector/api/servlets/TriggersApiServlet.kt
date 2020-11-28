@@ -39,6 +39,7 @@ class TriggersApiServlet : HttpServlet() {
 
         when (request.pathInfo) {
             "/save" -> postSave(request, response)
+            "/reloadAll" -> postReloadAll(request, response)
             in Regex(deleteIdMatcher.pattern) -> deleteById(
                 response,
                 request.pathInfo.getPathVariables(deleteIdMatcher)
@@ -119,6 +120,14 @@ class TriggersApiServlet : HttpServlet() {
         updateProjectState(trigger)
 
         respondWithJson(response, trigger.run(TriggerJson::from))
+    }
+
+    private fun postReloadAll(request: HttpServletRequest, response: HttpServletResponse) {
+        logger.info("Reloading all Triggers")
+
+        Project.loadTriggers()
+
+        respondWithJson(response, "ok")
     }
 
     private fun deleteById(response: HttpServletResponse, params: List<String>) {
